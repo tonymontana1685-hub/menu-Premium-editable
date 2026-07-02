@@ -1,0 +1,4315 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#121212">
+  <meta name="description" content="Taberna &amp; Brasa — Carnes a la brasa y cocina tradicional valenciana. Reserva tu mesa.">
+  <title>Taberna &amp; Brasa · Sabores de Valencia</title>
+  <style>
+    /* ============================================================
+       TABERNA & BRASA — Splash + Carta + Filtros + Carrito
+       Paleta gestionada con variables CSS (Custom Properties)
+       Mobile-first · 360px–412px · Vanilla HTML/CSS/JS
+       ============================================================ */
+
+    :root {
+      /* Grises premium (fondo splash) */
+      --bg-deep:        #0c0c0e;
+      --bg-charcoal:    #141417;
+      --bg-graphite:    #1c1c20;
+      --bg-smoke:       #232328;
+
+      /* Brasas · Senyera Valenciana */
+      --ember-yellow:   #ffc400;
+      --ember-amber:    #ff9500;
+      --ember-orange:   #ff5e00;
+      --ember-red:      #d8241f;
+      --ember-crimson:  #9e1410;
+      --senyera-blue:   #1f4fa3;
+
+      /* Texto y trazos (modo oscuro) */
+      --text-primary:   #f7f5f2;
+      --text-muted:     rgba(247, 245, 242, 0.62);
+      --line-soft:      rgba(255, 255, 255, 0.16);
+      --line-strong:    rgba(255, 255, 255, 0.85);
+
+      /* Superficies translúcidas (modo oscuro) */
+      --glass-bg:       rgba(20, 20, 23, 0.42);
+      --glass-bg-hover: rgba(255, 255, 255, 0.08);
+
+      /* Modo claro cálido (carta) */
+      --paper-bg:       #f5f2eb;
+      --paper-light:    #fdfbf7;
+      --paper-card:     #ffffff;
+      --ink-strong:     #2c2c2c;
+      --ink-medium:     #6b675f;
+      --ink-soft:       #9c978c;
+      --sand:           #ece7dc;
+      --sand-deep:      #e1dbcd;
+      --placeholder-bg: #efebe9;
+      --placeholder-fg: #b3aaa3;
+      --fire-accent:    #e25822;
+      --fire-deep:      #c2461a;
+      --gold:           #c9962e;
+      --heart-red:      #e0312b;
+      --paper-line:     rgba(44, 44, 44, 0.10);
+
+      /* Tintas suaves para etiquetas de alérgenos */
+      --tint-amber-bg:  #f6ead2; --tint-amber-fg:  #8f6418;
+      --tint-blue-bg:   #e7eef7; --tint-blue-fg:   #3f5f8a;
+      --tint-yellow-bg: #fbf3d6; --tint-yellow-fg: #93741a;
+      --tint-green-bg:  #e9f0ea; --tint-green-fg:  #44704f;
+      --tint-teal-bg:   #e2eff0; --tint-teal-fg:   #2f6b70;
+      --tint-purple-bg: #efe9f4; --tint-purple-fg: #6a4f86;
+      --tint-brown-bg:  #f1e8e0; --tint-brown-fg:  #7c5a3c;
+      --tint-red-bg:    #f8e7e3; --tint-red-fg:    #9c3f2e;
+      --tint-olive-bg:  #eef0e0; --tint-olive-fg:  #6b6f2f;
+
+      /* Tipografía */
+      --font-stack: "Avenir Next", "Futura", "Century Gothic",
+                    "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+
+      /* Ritmo y radios */
+      --radius-pill: 999px;
+      --radius-card: 18px;
+      --space-1: 0.5rem;
+      --space-2: 0.875rem;
+      --space-3: 1.25rem;
+      --space-4: 2rem;
+
+      --transition-fast: 180ms cubic-bezier(0.4, 0, 0.2, 1);
+      --transition-screen: 420ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* ---------- Reset y base ---------- */
+    *,
+    *::before,
+    *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      -webkit-text-size-adjust: 100%;
+    }
+
+    html,
+    body {
+      height: 100%;
+    }
+
+    body {
+      font-family: var(--font-stack);
+      color: var(--text-primary);
+      background-color: var(--bg-deep);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow-x: hidden;
+      transition: background-color var(--transition-screen);
+    }
+
+    body.menu-active {
+      background-color: var(--paper-bg);
+    }
+
+    body.splash-active {
+      overflow: hidden;
+    }
+
+    body.modal-open {
+      overflow: hidden;
+    }
+
+    /* Ocultar barras de scroll en todos los motores */
+    ::-webkit-scrollbar {
+      width: 0;
+      height: 0;
+      display: none;
+    }
+    body,
+    .categories,
+    .filter-sidebar,
+    .cart-panel {
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+
+    /* ============================================================
+       SELECTOR DE IDIOMA (común a ambas pantallas)
+       ============================================================ */
+    .lang-switch {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      border: 0;
+      background: transparent;
+      font-family: inherit;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      padding: 0.45rem 0.2rem;
+    }
+
+    .lang-switch span {
+      transition: color var(--transition-fast), opacity var(--transition-fast);
+    }
+
+    .lang-switch .lang-sep {
+      opacity: 0.35;
+      font-weight: 400;
+    }
+
+    .lang-switch--dark {
+      position: absolute;
+      top: calc(env(safe-area-inset-top, 0px) + 14px);
+      right: 16px;
+      z-index: 5;
+      color: var(--text-muted);
+    }
+    .lang-switch--dark .lang-on { color: var(--text-primary); }
+    .lang-switch--dark .lang-off { color: var(--text-muted); opacity: 0.55; }
+
+    .lang-switch--light {
+      color: var(--ink-soft);
+    }
+    .lang-switch--light .lang-on { color: var(--ink-strong); }
+    .lang-switch--light .lang-off { color: var(--ink-soft); opacity: 0.7; }
+
+    .lang-switch:focus-visible {
+      outline: 2px solid var(--ember-yellow);
+      outline-offset: 3px;
+      border-radius: 6px;
+    }
+
+    /* ============================================================
+       PANTALLA 1 · SPLASH SCREEN (modo oscuro)
+       ============================================================ */
+    .splash {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      min-height: 100vh;
+      min-height: 100dvh;
+      padding:
+        calc(env(safe-area-inset-top, 0px) + var(--space-4))
+        var(--space-3)
+        calc(env(safe-area-inset-bottom, 0px) + var(--space-3));
+      overflow: hidden;
+      isolation: isolate;
+      opacity: 1;
+      transition: opacity var(--transition-screen), visibility var(--transition-screen);
+      background:
+        radial-gradient(120% 80% at 50% 0%,
+          var(--bg-smoke) 0%,
+          var(--bg-graphite) 32%,
+          var(--bg-charcoal) 62%,
+          var(--bg-deep) 100%);
+    }
+
+    .splash.is-hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .splash::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -2;
+      background-image:
+        repeating-linear-gradient(
+          115deg,
+          rgba(255, 255, 255, 0.012) 0px,
+          rgba(255, 255, 255, 0.012) 1px,
+          transparent 1px,
+          transparent 4px
+        ),
+        repeating-linear-gradient(
+          25deg,
+          rgba(0, 0, 0, 0.18) 0px,
+          rgba(0, 0, 0, 0.18) 1px,
+          transparent 1px,
+          transparent 5px
+        );
+      pointer-events: none;
+    }
+
+    .embers {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 38dvh;
+      z-index: -1;
+      pointer-events: none;
+      background:
+        radial-gradient(2.5px 2.5px at 12% 78%, var(--ember-yellow) 40%, transparent 100%),
+        radial-gradient(2px 2px   at 26% 88%, var(--ember-amber)  40%, transparent 100%),
+        radial-gradient(3px 3px   at 38% 72%, var(--ember-orange) 40%, transparent 100%),
+        radial-gradient(2px 2px   at 49% 90%, var(--ember-yellow) 40%, transparent 100%),
+        radial-gradient(2.5px 2.5px at 61% 76%, var(--ember-red)  40%, transparent 100%),
+        radial-gradient(2px 2px   at 72% 86%, var(--ember-amber)  40%, transparent 100%),
+        radial-gradient(3px 3px   at 84% 74%, var(--ember-orange) 40%, transparent 100%),
+        radial-gradient(2px 2px   at 92% 88%, var(--ember-yellow) 40%, transparent 100%),
+        radial-gradient(60% 42% at 22% 100%,
+          rgba(255, 196, 0, 0.55) 0%,
+          rgba(255, 94, 0, 0.34) 38%,
+          transparent 72%),
+        radial-gradient(70% 50% at 78% 100%,
+          rgba(216, 36, 31, 0.62) 0%,
+          rgba(158, 20, 16, 0.36) 42%,
+          transparent 75%),
+        radial-gradient(90% 55% at 50% 105%,
+          rgba(255, 149, 0, 0.50) 0%,
+          rgba(216, 36, 31, 0.30) 45%,
+          transparent 78%),
+        radial-gradient(120% 30% at 50% 100%,
+          rgba(31, 79, 163, 0.22) 0%,
+          transparent 60%),
+        linear-gradient(to top,
+          rgba(158, 20, 16, 0.55) 0%,
+          rgba(216, 36, 31, 0.28) 26%,
+          rgba(255, 94, 0, 0.14) 48%,
+          transparent 100%);
+      mask-image: linear-gradient(to top, #000 62%, transparent 100%);
+      -webkit-mask-image: linear-gradient(to top, #000 62%, transparent 100%);
+      animation: ember-breathe 4.5s ease-in-out infinite alternate;
+    }
+
+    .embers::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 6px;
+      background: repeating-linear-gradient(
+        90deg,
+        var(--ember-yellow) 0px,  var(--ember-yellow) 22px,
+        var(--ember-red)   22px,  var(--ember-red)   44px
+      );
+      opacity: 0.35;
+      filter: blur(1.5px);
+    }
+
+    @keyframes ember-breathe {
+      from { opacity: 0.82; filter: saturate(0.95); }
+      to   { opacity: 1;    filter: saturate(1.15); }
+    }
+
+    .brand {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--space-3);
+      text-align: center;
+      animation: rise-in 700ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    .brand__logo {
+      display: grid;
+      place-items: center;
+      width: 104px;
+      height: 104px;
+      border-radius: 50%;
+      border: 1px solid var(--line-soft);
+      background:
+        radial-gradient(80% 80% at 30% 25%,
+          rgba(255, 255, 255, 0.07) 0%,
+          transparent 60%),
+        var(--bg-graphite);
+      box-shadow:
+        0 0 0 6px rgba(255, 255, 255, 0.03),
+        0 14px 38px rgba(0, 0, 0, 0.55);
+    }
+
+    .brand__logo svg {
+      display: block;
+      width: 56px;
+      height: 56px;
+    }
+
+    .brand__title {
+      font-size: clamp(1.55rem, 7.4vw, 1.9rem);
+      font-weight: 800;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      line-height: 1.25;
+      text-shadow: 0 2px 18px rgba(0, 0, 0, 0.6);
+      margin-right: -0.22em;
+    }
+
+    .brand__subtitle {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-size: 0.78rem;
+      font-weight: 500;
+      letter-spacing: 0.34em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-right: -0.34em;
+    }
+
+    .brand__subtitle::before,
+    .brand__subtitle::after {
+      content: "";
+      width: 26px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--line-soft));
+    }
+
+    .brand__subtitle::after {
+      background: linear-gradient(90deg, var(--line-soft), transparent);
+    }
+
+    .actions {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: var(--space-2);
+      width: 100%;
+      max-width: 320px;
+      animation: rise-in 700ms cubic-bezier(0.16, 1, 0.3, 1) 140ms both;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.7rem;
+      min-height: 56px;
+      padding: var(--space-2) var(--space-3);
+      border: 1px solid var(--line-strong);
+      border-radius: var(--radius-pill);
+      background: var(--glass-bg);
+      -webkit-backdrop-filter: blur(12px);
+      backdrop-filter: blur(12px);
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 0.95rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      text-decoration: none;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      transition:
+        background-color var(--transition-fast),
+        transform var(--transition-fast),
+        box-shadow var(--transition-fast),
+        border-color var(--transition-fast);
+    }
+
+    .btn svg {
+      flex: 0 0 auto;
+      width: 20px;
+      height: 20px;
+    }
+
+    .btn:hover,
+    .btn:focus-visible {
+      background: var(--glass-bg-hover);
+      box-shadow: 0 8px 26px rgba(0, 0, 0, 0.45);
+      transform: translateY(-2px);
+    }
+
+    .btn:active {
+      transform: translateY(0) scale(0.98);
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    .btn:focus-visible {
+      outline: 2px solid var(--ember-yellow);
+      outline-offset: 3px;
+    }
+
+    .btn--whatsapp svg {
+      color: #34d263;
+    }
+
+    .social {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-3);
+      animation: rise-in 700ms cubic-bezier(0.16, 1, 0.3, 1) 260ms both;
+    }
+
+    .social__link {
+      display: grid;
+      place-items: center;
+      width: 46px;
+      height: 46px;
+      border: 1px solid var(--line-soft);
+      border-radius: 50%;
+      background: var(--glass-bg);
+      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(10px);
+      color: var(--text-primary);
+      text-decoration: none;
+      -webkit-tap-highlight-color: transparent;
+      transition:
+        background-color var(--transition-fast),
+        border-color var(--transition-fast),
+        transform var(--transition-fast);
+    }
+
+    .social__link svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .social__link:hover,
+    .social__link:focus-visible {
+      background: var(--glass-bg-hover);
+      border-color: var(--line-strong);
+      transform: translateY(-2px);
+    }
+
+    .social__link:active {
+      transform: scale(0.94);
+    }
+
+    .social__link:focus-visible {
+      outline: 2px solid var(--ember-yellow);
+      outline-offset: 3px;
+    }
+
+    @keyframes rise-in {
+      from {
+        opacity: 0;
+        transform: translateY(18px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* ============================================================
+       PANTALLA 2 · CARTA (modo claro cálido, papel crema)
+       ============================================================ */
+    .menu-screen {
+      display: none;
+      min-height: 100dvh;
+      background:
+        repeating-linear-gradient(
+          0deg,
+          rgba(44, 44, 44, 0.014) 0px,
+          rgba(44, 44, 44, 0.014) 1px,
+          transparent 1px,
+          transparent 3px
+        ),
+        repeating-linear-gradient(
+          90deg,
+          rgba(44, 44, 44, 0.010) 0px,
+          rgba(44, 44, 44, 0.010) 1px,
+          transparent 1px,
+          transparent 3px
+        ),
+        radial-gradient(140% 90% at 50% 0%,
+          var(--paper-light) 0%,
+          var(--paper-bg) 70%);
+      color: var(--ink-strong);
+      padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 110px);
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity var(--transition-screen), transform var(--transition-screen);
+    }
+
+    .menu-screen.is-visible {
+      display: block;
+    }
+
+    .menu-screen.is-shown {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .menu-header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-2);
+      padding:
+        calc(env(safe-area-inset-top, 0px) + 12px)
+        var(--space-3)
+        12px;
+      background: rgba(253, 251, 247, 0.78);
+      -webkit-backdrop-filter: blur(14px);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--paper-line);
+    }
+
+    .brand__address {
+      font-family: "Georgia", "Times New Roman", "Palatino", serif;
+      font-size: 0.72rem;
+      font-style: normal;
+      font-weight: 400;
+      letter-spacing: 0.06em;
+      color: rgba(201, 150, 46, 0.62);
+      text-align: center;
+      margin-top: -0.4rem;
+    }
+
+    .menu-header__brand {
+      display: inline-flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 0.7rem;
+      min-width: 0;
+    }
+
+    .menu-header__brand-text {
+      display: flex;
+      flex-direction: column;
+      gap: 0.1rem;
+      min-width: 0;
+    }
+
+    .menu-header__slogan {
+      font-size: 0.62rem;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      color: rgba(201, 150, 46, 0.75);
+      white-space: nowrap;
+      line-height: 1;
+    }
+
+    .menu-header__logo {
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: 1px solid var(--paper-line);
+      background: var(--paper-card);
+      box-shadow: 0 2px 8px rgba(44, 44, 44, 0.08);
+    }
+
+    .menu-header__logo svg {
+      width: 22px;
+      height: 22px;
+      display: block;
+    }
+
+    .menu-header__name {
+      font-size: 0.92rem;
+      font-weight: 800;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--ink-strong);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* --- Fila aviso de alérgenos + botón de filtro --- */
+    .allergen-row {
+      display: flex;
+      align-items: stretch;
+      gap: 0.6rem;
+      margin: var(--space-2) var(--space-3) 0;
+    }
+
+    .allergen-banner {
+      flex: 1 1 auto;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.65rem;
+      padding: 0.7rem 0.9rem;
+      border: 1px solid rgba(201, 150, 46, 0.35);
+      border-left: 3px solid var(--gold);
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(201, 150, 46, 0.10), rgba(201, 150, 46, 0.04));
+      color: var(--ink-medium);
+      font-size: 0.74rem;
+      line-height: 1.45;
+    }
+
+    .allergen-banner svg {
+      flex: 0 0 auto;
+      width: 17px;
+      height: 17px;
+      margin-top: 1px;
+      color: var(--gold);
+    }
+
+    .allergen-banner strong {
+      color: var(--ink-strong);
+      font-weight: 700;
+    }
+
+    .filter-btn {
+      position: relative;
+      flex: 0 0 auto;
+      align-self: center;
+      display: grid;
+      place-items: center;
+      width: 46px;
+      height: 46px;
+      border: 1px solid rgba(201, 150, 46, 0.4);
+      border-radius: 50%;
+      background: var(--paper-card);
+      color: var(--gold);
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      box-shadow: 0 3px 10px rgba(44, 44, 44, 0.08);
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast), background-color var(--transition-fast);
+    }
+
+    .filter-btn svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .filter-btn:active {
+      transform: scale(0.92);
+    }
+
+    .filter-btn:focus-visible {
+      outline: 2px solid var(--fire-accent);
+      outline-offset: 2px;
+    }
+
+    .filter-btn__badge {
+      position: absolute;
+      top: -4px;
+      right: -4px;
+      display: grid;
+      place-items: center;
+      min-width: 19px;
+      height: 19px;
+      padding: 0 4px;
+      border-radius: var(--radius-pill);
+      background: var(--fire-accent);
+      color: #ffffff;
+      font-size: 0.64rem;
+      font-weight: 800;
+      line-height: 1;
+      box-shadow: 0 2px 6px rgba(226, 88, 34, 0.45);
+    }
+
+    .filter-btn__badge[hidden] {
+      display: none;
+    }
+
+    .filter-btn.is-filtering {
+      background: rgba(201, 150, 46, 0.12);
+    }
+
+    /* ============================================================
+       SIDEBAR DE FILTRADO DE ALÉRGENOS (14 alérgenos UE)
+       ============================================================ */
+    .sidebar-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 1090;
+      background: rgba(20, 18, 14, 0.38);
+      -webkit-backdrop-filter: blur(2px);
+      backdrop-filter: blur(2px);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 300ms ease, visibility 300ms ease;
+    }
+
+    .sidebar-overlay.is-open {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .filter-sidebar {
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 1100;
+      display: flex;
+      flex-direction: column;
+      width: min(86vw, 340px);
+      padding:
+        calc(env(safe-area-inset-top, 0px) + var(--space-3))
+        var(--space-3)
+        calc(env(safe-area-inset-bottom, 0px) + var(--space-3));
+      background: var(--paper-light);
+      border-left: 1px solid var(--paper-line);
+      box-shadow: -16px 0 44px rgba(44, 44, 44, 0.18);
+      transform: translateX(105%);
+      transition: transform 340ms cubic-bezier(0.16, 1, 0.3, 1);
+      overflow-y: auto;
+    }
+
+    .filter-sidebar.is-open {
+      transform: translateX(0);
+    }
+
+    .filter-sidebar__head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-2);
+      margin-bottom: 0.4rem;
+    }
+
+    .filter-sidebar__title {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.95rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-strong);
+    }
+
+    .filter-sidebar__title svg {
+      width: 18px;
+      height: 18px;
+      color: var(--gold);
+    }
+
+    .filter-sidebar__close,
+    .cart-panel__close {
+      display: grid;
+      place-items: center;
+      width: 38px;
+      height: 38px;
+      border: 1px solid var(--paper-line);
+      border-radius: 50%;
+      background: var(--paper-card);
+      color: var(--ink-strong);
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      transition: transform var(--transition-fast);
+    }
+
+    .filter-sidebar__close svg,
+    .cart-panel__close svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .filter-sidebar__close:active,
+    .cart-panel__close:active {
+      transform: scale(0.9);
+    }
+
+    .filter-sidebar__close:focus-visible,
+    .cart-panel__close:focus-visible {
+      outline: 2px solid var(--fire-accent);
+      outline-offset: 2px;
+    }
+
+    .filter-sidebar__hint {
+      font-size: 0.78rem;
+      line-height: 1.5;
+      color: var(--ink-medium);
+      margin-bottom: var(--space-2);
+    }
+
+    /* Contenedor flexible: no limitado a 4 elementos, crece en rejilla */
+    .filter-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 10px;
+      list-style: none;
+    }
+
+    .filter-option {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      padding: 0.62rem 0.7rem;
+      border: 1px solid var(--sand-deep);
+      border-radius: 12px;
+      background: var(--paper-card);
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      transition: border-color var(--transition-fast), background-color var(--transition-fast), box-shadow var(--transition-fast);
+    }
+
+    .filter-option.is-checked {
+      border-color: var(--fire-accent);
+      background: rgba(226, 88, 34, 0.06);
+      box-shadow: 0 4px 12px rgba(226, 88, 34, 0.12);
+    }
+
+    .filter-option input[type="checkbox"] {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .filter-option__box {
+      flex: 0 0 auto;
+      display: grid;
+      place-items: center;
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--sand-deep);
+      border-radius: 6px;
+      background: var(--paper-light);
+      color: #ffffff;
+      transition: background-color var(--transition-fast), border-color var(--transition-fast);
+    }
+
+    .filter-option__box svg {
+      width: 12px;
+      height: 12px;
+      opacity: 0;
+      transition: opacity var(--transition-fast);
+    }
+
+    .filter-option.is-checked .filter-option__box {
+      background: var(--fire-accent);
+      border-color: var(--fire-accent);
+    }
+
+    .filter-option.is-checked .filter-option__box svg {
+      opacity: 1;
+    }
+
+    .filter-option__dot {
+      flex: 0 0 auto;
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+    }
+
+    .filter-option__label {
+      flex: 1 1 auto;
+      font-size: 0.74rem;
+      font-weight: 700;
+      line-height: 1.25;
+      color: var(--ink-strong);
+    }
+
+    .filter-option:focus-within {
+      outline: 2px solid var(--fire-accent);
+      outline-offset: 2px;
+    }
+
+    .clear-filters-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      width: 100%;
+      min-height: 50px;
+      margin-top: var(--space-3);
+      border: 1px solid var(--ink-strong);
+      border-radius: var(--radius-pill);
+      background: transparent;
+      color: var(--ink-strong);
+      font-family: inherit;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      transition: background-color var(--transition-fast), transform var(--transition-fast), opacity var(--transition-fast);
+    }
+
+    .clear-filters-btn svg {
+      width: 17px;
+      height: 17px;
+    }
+
+    .clear-filters-btn:active {
+      transform: scale(0.98);
+      background: var(--sand);
+    }
+
+    .clear-filters-btn:disabled {
+      opacity: 0.35;
+      cursor: default;
+    }
+
+    .clear-filters-btn:focus-visible {
+      outline: 2px solid var(--fire-accent);
+      outline-offset: 3px;
+    }
+
+    /* --- Selector de categorías horizontal --- */
+    .categories {
+      display: flex;
+      gap: 0.55rem;
+      padding: var(--space-2) var(--space-3);
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scroll-snap-type: x proximity;
+    }
+
+    .category-chip {
+      flex: 0 0 auto;
+      scroll-snap-align: start;
+      padding: 0.6rem 1.05rem;
+      border: 1px solid var(--sand-deep);
+      border-radius: var(--radius-pill);
+      background: var(--sand);
+      color: var(--ink-medium);
+      font-family: inherit;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      white-space: nowrap;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      transition:
+        background-color var(--transition-fast),
+        color var(--transition-fast),
+        border-color var(--transition-fast),
+        box-shadow var(--transition-fast),
+        transform var(--transition-fast);
+    }
+
+    .category-chip:active {
+      transform: scale(0.96);
+    }
+
+    .category-chip.is-active {
+      background: linear-gradient(135deg, var(--fire-accent), var(--fire-deep));
+      border-color: var(--fire-deep);
+      color: #ffffff;
+      box-shadow: 0 6px 16px rgba(226, 88, 34, 0.35);
+    }
+
+    .category-chip:focus-visible {
+      outline: 2px solid var(--fire-accent);
+      outline-offset: 2px;
+    }
+
+    /* --- Lista de tarjetas --- */
+    .dish-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+      padding: 0.25rem var(--space-3) var(--space-3);
+      list-style: none;
+    }
+
+    .dish-card {
+      display: flex;
+      align-items: stretch;
+      gap: 0.85rem;
+      padding: 0.7rem;
+      border-radius: var(--radius-card);
+      background: var(--paper-card);
+      box-shadow:
+        0 1px 2px rgba(44, 44, 44, 0.05),
+        0 8px 22px rgba(44, 44, 44, 0.07);
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+      animation: card-in 360ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    .dish-card:active {
+      transform: scale(0.985);
+      box-shadow:
+        0 1px 2px rgba(44, 44, 44, 0.05),
+        0 4px 12px rgba(44, 44, 44, 0.08);
+    }
+
+    @keyframes card-in {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .dish-placeholder {
+      flex: 0 0 auto;
+      display: grid;
+      place-items: center;
+      width: 88px;
+      height: 88px;
+      border-radius: 14px;
+      border: 1px solid rgba(44, 44, 44, 0.06);
+      background:
+        radial-gradient(90% 90% at 30% 22%,
+          rgba(255, 255, 255, 0.65) 0%,
+          transparent 55%),
+        var(--placeholder-bg);
+      box-shadow: inset 0 0 0 5px rgba(255, 255, 255, 0.45);
+      color: var(--placeholder-fg);
+    }
+
+    .dish-placeholder svg {
+      display: block;
+      width: 34px;
+      height: 34px;
+    }
+
+    /* Icono 3D nativo (emoji) indexado por nombre/categoría del plato */
+    .dish-placeholder .dish-emoji {
+      font-size: 44px;
+      line-height: 1;
+      filter: drop-shadow(0 4px 6px rgba(44, 44, 44, 0.18));
+    }
+
+    .dish-card__body {
+      flex: 1 1 auto;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-width: 0;
+      gap: 0.3rem;
+    }
+
+    .dish-card__title {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.35rem;
+      font-size: 0.92rem;
+      font-weight: 700;
+      line-height: 1.3;
+      color: var(--ink-strong);
+    }
+
+    .dish-card__title .star {
+      flex: 0 0 auto;
+      width: 15px;
+      height: 15px;
+      margin-top: 1px;
+      color: var(--gold);
+    }
+
+    .dish-card__desc {
+      font-size: 0.84rem;
+      line-height: 1.45;
+      color: var(--ink-medium);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    /* --- Etiquetas de alérgenos (píldoras compactas) --- */
+    .allergen-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.3rem;
+      margin-top: 0.1rem;
+    }
+
+    .allergen-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.28rem;
+      padding: 0.18rem 0.55rem;
+      border-radius: var(--radius-pill);
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      line-height: 1.4;
+      white-space: nowrap;
+    }
+
+    .allergen-tag svg {
+      flex: 0 0 auto;
+      width: 11px;
+      height: 11px;
+    }
+
+    .tint-amber  { background: var(--tint-amber-bg);  color: var(--tint-amber-fg); }
+    .tint-blue   { background: var(--tint-blue-bg);   color: var(--tint-blue-fg); }
+    .tint-yellow { background: var(--tint-yellow-bg); color: var(--tint-yellow-fg); }
+    .tint-green  { background: var(--tint-green-bg);  color: var(--tint-green-fg); }
+    .tint-teal   { background: var(--tint-teal-bg);   color: var(--tint-teal-fg); }
+    .tint-purple { background: var(--tint-purple-bg); color: var(--tint-purple-fg); }
+    .tint-brown  { background: var(--tint-brown-bg);  color: var(--tint-brown-fg); }
+    .tint-red    { background: var(--tint-red-bg);    color: var(--tint-red-fg); }
+    .tint-olive  { background: var(--tint-olive-bg);  color: var(--tint-olive-fg); }
+
+    .dot-amber  { background: var(--tint-amber-fg); }
+    .dot-blue   { background: var(--tint-blue-fg); }
+    .dot-yellow { background: var(--tint-yellow-fg); }
+    .dot-green  { background: var(--tint-green-fg); }
+    .dot-teal   { background: var(--tint-teal-fg); }
+    .dot-purple { background: var(--tint-purple-fg); }
+    .dot-brown  { background: var(--tint-brown-fg); }
+    .dot-red    { background: var(--tint-red-fg); }
+    .dot-olive  { background: var(--tint-olive-fg); }
+
+    .allergen-tags--modal .allergen-tag {
+      font-size: 0.7rem;
+      padding: 0.28rem 0.7rem;
+    }
+
+    .allergen-tags--modal .allergen-tag svg {
+      width: 13px;
+      height: 13px;
+    }
+
+    .dish-card__side {
+      flex: 0 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      justify-content: space-between;
+      padding: 0.1rem 0;
+    }
+
+    .dish-card__price {
+      font-size: 0.98rem;
+      font-weight: 800;
+      color: var(--fire-accent);
+      white-space: nowrap;
+    }
+
+    .fav-btn {
+      display: grid;
+      place-items: center;
+      width: 36px;
+      height: 36px;
+      border: 0;
+      border-radius: 50%;
+      background: transparent;
+      color: var(--ink-soft);
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      transition: color var(--transition-fast), transform var(--transition-fast), background-color var(--transition-fast);
+    }
+
+    .fav-btn svg {
+      width: 21px;
+      height: 21px;
+    }
+
+    .fav-btn:active {
+      transform: scale(1.2);
+    }
+
+    .fav-btn.is-fav {
+      color: var(--heart-red);
+      background: rgba(224, 49, 43, 0.08);
+    }
+
+    .fav-btn.is-fav .heart-fill {
+      fill: currentColor;
+    }
+
+    .fav-btn:focus-visible {
+      outline: 2px solid var(--fire-accent);
+      outline-offset: 2px;
+    }
+
+    .empty-state {
+      padding: var(--space-4) var(--space-3);
+      text-align: center;
+      color: var(--ink-soft);
+      font-size: 0.85rem;
+      line-height: 1.6;
+    }
+
+    .empty-state svg {
+      width: 40px;
+      height: 40px;
+      margin-bottom: 0.6rem;
+      color: var(--sand-deep);
+    }
+
+    /* ============================================================
+       PÍLDORA FLOTANTE (estilo Samsung One UI)
+       ============================================================ */
+    .floating-pill {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 999;
+      display: none;
+      align-items: center;
+      justify-content: space-around;
+      width: 85%;
+      max-width: 380px;
+      padding: 0.7rem 1rem;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 50px;
+      background: rgba(12, 12, 14, 0.72);
+      -webkit-backdrop-filter: blur(12px);
+      backdrop-filter: blur(12px);
+      box-shadow:
+        0 10px 32px rgba(0, 0, 0, 0.35),
+        inset 0 1px 0 rgba(255, 255, 255, 0.06);
+      opacity: 0;
+      transition: opacity var(--transition-screen);
+    }
+
+    .floating-pill.is-visible {
+      display: flex;
+    }
+
+    .floating-pill.is-shown {
+      opacity: 1;
+    }
+
+    .pill-link {
+      display: grid;
+      place-items: center;
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      color: #f2f0ec;
+      text-decoration: none;
+      -webkit-tap-highlight-color: transparent;
+      transition: background-color var(--transition-fast), transform var(--transition-fast);
+    }
+
+    .pill-link svg {
+      width: 26px;
+      height: 26px;
+    }
+
+    .pill-link:hover,
+    .pill-link:focus-visible {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .pill-link:active {
+      transform: scale(0.88);
+    }
+
+    .pill-link:focus-visible {
+      outline: 2px solid var(--ember-yellow);
+      outline-offset: 2px;
+    }
+
+    .pill-link--whatsapp  { color: #34d263; }
+    .pill-link--instagram { color: #ff5d8f; }
+    .pill-link--tiktok    { color: #7de8e3; }
+    .pill-link--facebook  { color: #6ea8ff; }
+
+    /* ============================================================
+       FAB DEL CARRITO (UI asimétrica, lado izquierdo)
+       ============================================================ */
+    .cart-fab {
+      position: fixed;
+      bottom: 95px;
+      left: 6%;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: #2C2C2C;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      color: #ffffff;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      visibility: hidden;
+      opacity: 0;
+      transform: scale(0.8);
+      transition:
+        opacity var(--transition-screen),
+        transform var(--transition-screen),
+        visibility var(--transition-screen);
+    }
+
+    .cart-fab.is-shown {
+      visibility: visible;
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .cart-fab svg {
+      width: 26px;
+      height: 26px;
+    }
+
+    .cart-fab:active {
+      transform: scale(0.9);
+    }
+
+    .cart-fab:focus-visible {
+      outline: 2px solid var(--ember-yellow);
+      outline-offset: 3px;
+    }
+
+    .cart-fab__badge {
+      position: absolute;
+      top: -4px;
+      right: -4px;
+      display: none;
+      place-items: center;
+      min-width: 22px;
+      height: 22px;
+      padding: 0 5px;
+      border-radius: var(--radius-pill);
+      background: var(--fire-accent);
+      color: #ffffff;
+      font-size: 0.7rem;
+      font-weight: 800;
+      line-height: 1;
+      box-shadow: 0 2px 8px rgba(226, 88, 34, 0.5);
+    }
+
+    .cart-fab__badge.is-active {
+      display: grid;
+    }
+
+    /* ============================================================
+       PANEL "TU PEDIDO" (slide-up desde abajo)
+       ============================================================ */
+    .cart-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 1140;
+      background: rgba(20, 18, 14, 0.42);
+      -webkit-backdrop-filter: blur(2px);
+      backdrop-filter: blur(2px);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 300ms ease, visibility 300ms ease;
+    }
+
+    .cart-overlay.is-open {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .cart-panel {
+      position: fixed;
+      left: 50%;
+      bottom: 0;
+      z-index: 1150;
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      max-width: 450px;
+      max-height: 88dvh;
+      background: #ffffff;
+      border-radius: 24px 24px 0 0;
+      box-shadow: 0 -18px 50px rgba(20, 18, 14, 0.25);
+      transform: translate(-50%, 105%);
+      transition: transform 380ms cubic-bezier(0.16, 1, 0.3, 1);
+      overflow: hidden;
+    }
+
+    .cart-panel.is-open {
+      transform: translate(-50%, 0);
+    }
+
+    .cart-panel__head {
+      flex: 0 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-2);
+      padding: var(--space-3) var(--space-3) var(--space-2);
+      border-bottom: 1px solid var(--paper-line);
+    }
+
+    .cart-panel__title {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      font-size: 1.02rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--ink-strong);
+    }
+
+    .cart-panel__title svg {
+      width: 21px;
+      height: 21px;
+      color: var(--fire-accent);
+    }
+
+    .cart-panel__scroll {
+      flex: 1 1 auto;
+      overflow-y: auto;
+      padding: var(--space-2) var(--space-3) calc(env(safe-area-inset-bottom, 0px) + var(--space-3));
+    }
+
+    .cart-empty {
+      padding: var(--space-4) var(--space-2);
+      text-align: center;
+      color: var(--ink-soft);
+      font-size: 0.85rem;
+      line-height: 1.6;
+    }
+
+    .cart-empty svg {
+      width: 38px;
+      height: 38px;
+      margin-bottom: 0.5rem;
+      color: var(--sand-deep);
+    }
+
+    .cart-items {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      list-style: none;
+    }
+
+    .cart-item {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      padding: 0.65rem 0.7rem;
+      border: 1px solid var(--sand-deep);
+      border-radius: 14px;
+      background: var(--paper-light);
+    }
+
+    .cart-item__info {
+      flex: 1 1 auto;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.18rem;
+    }
+
+    .cart-item__name {
+      font-size: 0.8rem;
+      font-weight: 700;
+      line-height: 1.3;
+      color: var(--ink-strong);
+    }
+
+    .cart-item__line-total {
+      font-size: 0.82rem;
+      font-weight: 800;
+      color: var(--fire-accent);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .cart-item__qty {
+      flex: 0 0 auto;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.1rem;
+      border: 1px solid var(--sand-deep);
+      border-radius: var(--radius-pill);
+      background: #ffffff;
+      padding: 0.15rem;
+    }
+
+    .cart-item__qty .qty-btn {
+      width: 30px;
+      height: 30px;
+      font-size: 1.05rem;
+    }
+
+    .cart-item__qty .qty-value {
+      min-width: 24px;
+      font-size: 0.88rem;
+    }
+
+    .cart-item__remove {
+      flex: 0 0 auto;
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border: 0;
+      border-radius: 50%;
+      background: transparent;
+      color: var(--ink-soft);
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      transition: color var(--transition-fast), background-color var(--transition-fast), transform var(--transition-fast);
+    }
+
+    .cart-item__remove svg {
+      width: 17px;
+      height: 17px;
+    }
+
+    .cart-item__remove:active {
+      transform: scale(0.88);
+      color: var(--heart-red);
+      background: rgba(224, 49, 43, 0.08);
+    }
+
+    .cart-item__remove:focus-visible {
+      outline: 2px solid var(--fire-accent);
+      outline-offset: 2px;
+    }
+
+    /* Bloque de totales */
+    .cart-total {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: var(--space-2);
+      padding: 0.85rem 1rem;
+      border-radius: 14px;
+      background: linear-gradient(135deg, rgba(226, 88, 34, 0.10), rgba(226, 88, 34, 0.04));
+      border: 1px solid rgba(226, 88, 34, 0.25);
+    }
+
+    .cart-total__label {
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--ink-strong);
+    }
+
+    .cart-total__value {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--fire-accent);
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Formulario de despacho */
+    .cart-form {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      margin-top: var(--space-2);
+    }
+
+    .cart-form__field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.28rem;
+    }
+
+    .cart-form__label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--ink-medium);
+    }
+
+    .cart-form__input {
+      width: 100%;
+      min-height: 48px;
+      padding: 0.6rem 0.85rem;
+      border: 1px solid var(--sand-deep);
+      border-radius: 12px;
+      background: var(--paper-light);
+      color: var(--ink-strong);
+      font-family: inherit;
+      font-size: 0.88rem;
+      transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+    }
+
+    textarea.cart-form__input {
+      min-height: 72px;
+      resize: vertical;
+    }
+
+    .cart-form__input::placeholder {
+      color: var(--ink-soft);
+    }
+
+    .cart-form__input:focus {
+      outline: none;
+      border-color: var(--fire-accent);
+      box-shadow: 0 0 0 3px rgba(226, 88, 34, 0.14);
+    }
+
+    .cart-confirm-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      width: 100%;
+      min-height: 56px;
+      margin-top: var(--space-2);
+      border: 0;
+      border-radius: var(--radius-pill);
+      background: linear-gradient(135deg, var(--fire-accent), var(--fire-deep));
+      color: #ffffff;
+      font-family: inherit;
+      font-size: 0.92rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      box-shadow: 0 10px 26px rgba(226, 88, 34, 0.35);
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast), opacity var(--transition-fast);
+    }
+
+    .cart-confirm-btn svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .cart-confirm-btn:active {
+      transform: scale(0.98);
+      box-shadow: 0 5px 14px rgba(226, 88, 34, 0.3);
+    }
+
+    .cart-confirm-btn:disabled {
+      opacity: 0.4;
+      cursor: default;
+      box-shadow: none;
+    }
+
+    .cart-confirm-btn:focus-visible {
+      outline: 2px solid var(--ink-strong);
+      outline-offset: 3px;
+    }
+
+    /* ============================================================
+       MODAL DE DETALLE DE PLATO (light mode, pantalla completa)
+       ============================================================ */
+    .dish-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 1200;
+      display: none;
+      flex-direction: column;
+      background: #ffffff;
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 320ms cubic-bezier(0.16, 1, 0.3, 1), transform 320ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .dish-modal.is-visible {
+      display: flex;
+    }
+
+    .dish-modal.is-shown {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .dish-modal__media {
+      position: relative;
+      flex: 0 0 auto;
+      display: grid;
+      place-items: center;
+      height: 42dvh;
+      min-height: 250px;
+      overflow: hidden;
+      background:
+        radial-gradient(110% 100% at 50% 0%,
+          #f7f4f2 0%,
+          var(--placeholder-bg) 70%);
+      color: var(--placeholder-fg);
+    }
+
+    .dish-modal__media .placeholder-frame {
+      display: grid;
+      place-items: center;
+      width: min(50vw, 210px);
+      aspect-ratio: 1 / 1;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.55);
+      box-shadow:
+        inset 0 0 0 8px rgba(255, 255, 255, 0.7),
+        0 18px 44px rgba(44, 44, 44, 0.12);
+    }
+
+    .dish-modal__media .placeholder-frame svg {
+      display: block;
+      width: 42%;
+      height: 42%;
+    }
+
+    .dish-modal__media .placeholder-frame .dish-emoji {
+      font-size: min(24vw, 100px);
+      line-height: 1;
+      filter: drop-shadow(0 10px 16px rgba(44, 44, 44, 0.22));
+    }
+
+    .dish-modal__media::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 56px;
+      background: linear-gradient(to top, rgba(255, 255, 255, 1), transparent);
+      pointer-events: none;
+    }
+
+    .dish-modal__close {
+      position: absolute;
+      top: calc(env(safe-area-inset-top, 0px) + 14px);
+      right: 14px;
+      z-index: 2;
+      display: grid;
+      place-items: center;
+      width: 40px;
+      height: 40px;
+      border: 1px solid rgba(44, 44, 44, 0.12);
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.82);
+      -webkit-backdrop-filter: blur(8px);
+      backdrop-filter: blur(8px);
+      color: var(--ink-strong);
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      transition: transform var(--transition-fast), background-color var(--transition-fast);
+    }
+
+    .dish-modal__close svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .dish-modal__close:active {
+      transform: scale(0.9);
+    }
+
+    .dish-modal__close:focus-visible {
+      outline: 2px solid var(--fire-accent);
+      outline-offset: 2px;
+    }
+
+    .dish-modal__body {
+      flex: 1 1 auto;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+      padding: var(--space-2) var(--space-3) calc(env(safe-area-inset-bottom, 0px) + var(--space-3));
+      overflow-y: auto;
+    }
+
+    .dish-modal__badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      align-self: flex-start;
+      padding: 0.32rem 0.7rem;
+      border-radius: var(--radius-pill);
+      background: rgba(201, 150, 46, 0.14);
+      color: var(--gold);
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .dish-modal__badge svg {
+      width: 13px;
+      height: 13px;
+    }
+
+    .dish-modal__badge[hidden] {
+      display: none;
+    }
+
+    .dish-modal__title {
+      font-size: 1.28rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      line-height: 1.3;
+      color: #111111;
+    }
+
+    .dish-modal__desc {
+      font-size: 0.94rem;
+      line-height: 1.65;
+      color: var(--ink-medium);
+    }
+
+    .dish-modal__row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-2);
+      margin-top: auto;
+      padding-top: var(--space-2);
+    }
+
+    .dish-modal__price {
+      font-size: 1.7rem;
+      font-weight: 800;
+      color: var(--fire-accent);
+      white-space: nowrap;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .qty-control {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.2rem;
+      border: 1px solid var(--sand-deep);
+      border-radius: var(--radius-pill);
+      background: var(--paper-light);
+      padding: 0.25rem;
+    }
+
+    .qty-btn {
+      display: grid;
+      place-items: center;
+      width: 40px;
+      height: 40px;
+      border: 0;
+      border-radius: 50%;
+      background: transparent;
+      color: var(--ink-strong);
+      font-size: 1.3rem;
+      font-weight: 700;
+      font-family: inherit;
+      line-height: 1;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      transition: background-color var(--transition-fast), transform var(--transition-fast);
+    }
+
+    .qty-btn:active {
+      background: var(--sand);
+      transform: scale(0.92);
+    }
+
+    .qty-btn:disabled {
+      opacity: 0.3;
+      cursor: default;
+    }
+
+    .qty-btn:focus-visible {
+      outline: 2px solid var(--fire-accent);
+      outline-offset: 2px;
+    }
+
+    /* Valor de cantidad como input numérico de solo lectura visual */
+    .qty-value {
+      min-width: 34px;
+      width: 40px;
+      border: 0;
+      background: transparent;
+      text-align: center;
+      font-family: inherit;
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--ink-strong);
+      font-variant-numeric: tabular-nums;
+      pointer-events: none;
+    }
+
+    .add-cart-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      width: 100%;
+      min-height: 58px;
+      border: 0;
+      border-radius: var(--radius-pill);
+      background: linear-gradient(135deg, var(--fire-accent), var(--fire-deep));
+      color: #ffffff;
+      font-family: inherit;
+      font-size: 0.98rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      box-shadow: 0 10px 26px rgba(226, 88, 34, 0.35);
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast), filter var(--transition-fast);
+    }
+
+    .add-cart-btn svg {
+      width: 21px;
+      height: 21px;
+    }
+
+    .add-cart-btn:active {
+      transform: scale(0.98);
+      box-shadow: 0 5px 14px rgba(226, 88, 34, 0.3);
+    }
+
+    .add-cart-btn.is-added {
+      filter: saturate(0.4) brightness(1.05);
+    }
+
+    .add-cart-btn:focus-visible {
+      outline: 2px solid var(--ink-strong);
+      outline-offset: 3px;
+    }
+
+    /* ---------- Accesibilidad: movimiento reducido ---------- */
+    @media (prefers-reduced-motion: reduce) {
+      .brand,
+      .actions,
+      .social,
+      .dish-card {
+        animation: none;
+      }
+      .embers {
+        animation: none;
+      }
+      .btn,
+      .social__link,
+      .category-chip,
+      .fav-btn,
+      .pill-link,
+      .qty-btn,
+      .add-cart-btn,
+      .dish-modal,
+      .menu-screen,
+      .splash,
+      .floating-pill,
+      .filter-sidebar,
+      .sidebar-overlay,
+      .cart-fab,
+      .cart-panel,
+      .cart-overlay {
+        transition: none;
+      }
+    }
+
+    /* ---------- Ajuste fino para móviles muy compactos ---------- */
+    @media (max-height: 640px) {
+      .brand__logo {
+        width: 84px;
+        height: 84px;
+      }
+      .brand__logo svg {
+        width: 46px;
+        height: 46px;
+      }
+      .splash {
+        padding-top: calc(env(safe-area-inset-top, 0px) + var(--space-3));
+      }
+      .dish-modal__media {
+        height: 38dvh;
+        min-height: 200px;
+      }
+    }
+    /* ==========================================================
+       MODO ADMINISTRADOR (los elementos solo se crean tras login)
+       ========================================================== */
+    .is-hidden-dish {
+      opacity: 0.45;
+      filter: grayscale(0.55);
+    }
+
+    .is-hidden-dish::after {
+      content: "OCULTO";
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      font-size: 0.58rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: #fff;
+      background: #8a857c;
+      padding: 3px 8px;
+      border-radius: 99px;
+      pointer-events: none;
+    }
+
+    .admin-edit-btn {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      z-index: 5;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: none;
+      cursor: pointer;
+      font-size: 1.05rem;
+      line-height: 1;
+      color: #fff;
+      background: var(--fire-accent);
+      box-shadow: 0 4px 10px rgba(226, 88, 34, 0.35);
+      display: grid;
+      place-items: center;
+    }
+
+    .admin-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 1200;
+      background: rgba(30, 26, 22, 0.55);
+      backdrop-filter: blur(3px);
+      -webkit-backdrop-filter: blur(3px);
+    }
+
+    .admin-modal {
+      position: fixed;
+      z-index: 1210;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: min(92vw, 400px);
+      max-height: 86dvh;
+      overflow-y: auto;
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+      background: var(--paper-light);
+      border: 1px solid var(--paper-line);
+      border-radius: 20px;
+      padding: 1.3rem 1.2rem 1.4rem;
+      box-shadow: 0 24px 60px rgba(30, 26, 22, 0.35);
+    }
+
+    .admin-modal::-webkit-scrollbar { display: none; }
+
+    .admin-modal__title {
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--ink-strong);
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    .admin-modal .cart-form__field { margin-bottom: 0.75rem; }
+
+    .admin-pass-wrap { position: relative; }
+
+    .admin-eye-btn {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      font-size: 1rem;
+      color: var(--ink-medium);
+      padding: 4px;
+    }
+
+    .admin-error {
+      color: #c0392b;
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-align: center;
+      min-height: 1.1em;
+      margin: 0.35rem 0 0.55rem;
+    }
+
+    .admin-row {
+      display: flex;
+      gap: 0.6rem;
+      margin-top: 0.4rem;
+    }
+
+    .admin-row .cart-confirm-btn { flex: 1; margin-top: 0; }
+
+    .admin-bar {
+      position: fixed;
+      z-index: 1100;
+      top: 74px;
+      right: 10px;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.45rem 0.6rem;
+      border-radius: 99px;
+      background: rgba(44, 44, 44, 0.92);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      box-shadow: 0 8px 22px rgba(30, 26, 22, 0.35);
+    }
+
+    .admin-bar__label {
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: #ffc400;
+      text-transform: uppercase;
+      padding-left: 0.35rem;
+    }
+
+    .admin-bar button {
+      border: none;
+      cursor: pointer;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-size: 0.95rem;
+      color: #fff;
+      background: rgba(255, 255, 255, 0.14);
+    }
+
+    .admin-toast {
+      position: fixed;
+      z-index: 1300;
+      left: 50%;
+      bottom: 100px;
+      transform: translateX(-50%) translateY(16px);
+      background: #2c2c2c;
+      color: #fff;
+      font-size: 0.82rem;
+      font-weight: 600;
+      padding: 0.7rem 1.2rem;
+      border-radius: 99px;
+      box-shadow: 0 10px 26px rgba(30, 26, 22, 0.4);
+      opacity: 0;
+      transition: opacity 0.25s ease, transform 0.25s ease;
+      pointer-events: none;
+      max-width: 88vw;
+      text-align: center;
+    }
+
+    .admin-toast.is-on {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+  </style>
+</head>
+<body class="splash-active">
+
+  <!-- ============================================================
+       SVG SPRITE GLOBAL (símbolos reutilizables, sin dependencias)
+       ============================================================ -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <linearGradient id="flame" x1="32" y1="6" x2="32" y2="40" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stop-color="#ffc400"/>
+        <stop offset="0.55" stop-color="#ff5e00"/>
+        <stop offset="1" stop-color="#d8241f"/>
+      </linearGradient>
+
+      <symbol id="icon-logo" viewBox="0 0 64 64">
+        <path d="M32 7c2.4 5.2 7.6 8.3 9.8 13.2 2.3 5.1 1 11.4-3.2 14.9 0.4-3.1-0.7-6.2-3-8.2 0.5 4.5-2.3 7.4-5.5 9.3-3.5-2.4-5.7-6.5-5-10.8-1.8 1.5-2.9 3.7-3.1 6-3.3-4-3.6-9.9-0.8-14.3C23.7 12.7 29.5 11 32 7Z" fill="url(#flame)"/>
+        <line x1="14" y1="46" x2="50" y2="46" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="18" y1="53" x2="46" y2="53" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" opacity="0.55"/>
+      </symbol>
+
+      <symbol id="icon-whatsapp" viewBox="0 0 24 24">
+        <path fill="currentColor" d="M12.04 2C6.56 2 2.1 6.45 2.1 11.93c0 1.75.46 3.46 1.34 4.97L2 22l5.23-1.37a9.93 9.93 0 0 0 4.8 1.22h.01c5.48 0 9.93-4.45 9.93-9.92A9.86 9.86 0 0 0 19.07 4.9 9.87 9.87 0 0 0 12.04 2Zm0 18.17h-.01a8.24 8.24 0 0 1-4.2-1.15l-.3-.18-3.1.81.83-3.03-.2-.31a8.23 8.23 0 0 1-1.26-4.38c0-4.55 3.7-8.25 8.25-8.25 2.2 0 4.27.86 5.83 2.42a8.2 8.2 0 0 1 2.41 5.83c0 4.55-3.7 8.24-8.25 8.24Zm4.52-6.17c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.24-.64.8-.78.97-.14.16-.29.18-.54.06-.25-.12-1.05-.39-2-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.01-.38.11-.51.11-.11.25-.29.37-.43.12-.15.16-.25.25-.41.08-.17.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.41-.42-.56-.42-.14-.01-.31-.01-.47-.01-.17 0-.43.06-.66.31-.22.24-.86.84-.86 2.06 0 1.21.89 2.39 1.01 2.55.12.17 1.74 2.66 4.22 3.73.59.25 1.05.4 1.41.52.59.19 1.13.16 1.56.1.47-.07 1.47-.6 1.67-1.18.21-.58.21-1.07.15-1.18-.06-.1-.23-.16-.48-.29Z"/>
+      </symbol>
+
+      <symbol id="icon-instagram" viewBox="0 0 24 24">
+        <rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="1.8"/>
+        <circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/>
+        <circle cx="17.2" cy="6.8" r="1" fill="currentColor"/>
+      </symbol>
+
+      <symbol id="icon-facebook" viewBox="0 0 24 24">
+        <path fill="currentColor" d="M13.5 21v-7h2.4l.45-3H13.5V9.05c0-.87.28-1.55 1.62-1.55h1.38V4.85c-.66-.07-1.32-.1-1.98-.1-2.07 0-3.52 1.26-3.52 3.58V11H8.5v3H11v7h2.5Z"/>
+      </symbol>
+
+      <symbol id="icon-tiktok" viewBox="0 0 24 24">
+        <path fill="currentColor" d="M16.6 3c.35 1.97 1.6 3.46 3.9 3.62v2.78c-1.43.07-2.74-.36-3.9-1.17v5.9c0 4.05-2.86 6.07-5.74 6.07-2.7 0-5.36-1.97-5.36-5.27 0-3.36 2.86-5.42 5.83-5.16v2.9c-.32-.08-.62-.12-.92-.12-1.36 0-2.36.97-2.36 2.34 0 1.5 1.12 2.4 2.4 2.4 1.42 0 2.6-.93 2.6-2.9V3h3.55Z"/>
+      </symbol>
+
+      <symbol id="icon-messenger" viewBox="0 0 24 24">
+        <path fill="currentColor" d="M12 2C6.48 2 2.2 6.06 2.2 11.46c0 3.05 1.36 5.68 3.6 7.42v3.34l3.32-1.83c.9.25 1.86.39 2.88.39 5.52 0 9.8-4.06 9.8-9.46S17.52 2 12 2Zm1.05 12.62-2.55-2.7-4.85 2.7 5.3-5.62 2.6 2.7 4.8-2.7-5.3 5.62Z"/>
+      </symbol>
+
+      <symbol id="icon-menu-card" viewBox="0 0 24 24">
+        <path d="M4 4.5h11.5a2 2 0 0 1 2 2V21H6a2 2 0 0 1-2-2V4.5Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M17.5 8H20v11a2 2 0 0 1-2 2h-0.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        <line x1="7.5" y1="9" x2="14" y2="9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        <line x1="7.5" y1="13" x2="14" y2="13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        <line x1="7.5" y1="17" x2="11.5" y2="17" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      </symbol>
+
+      <symbol id="icon-star" viewBox="0 0 24 24">
+        <path fill="currentColor" d="M12 2.6 14.9 8.6l6.5.9-4.7 4.5 1.1 6.4L12 17.4l-5.8 3 1.1-6.4L2.6 9.5l6.5-.9L12 2.6Z"/>
+      </symbol>
+
+      <symbol id="icon-heart" viewBox="0 0 24 24">
+        <path class="heart-fill" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" d="M12 20.4S3.5 15.2 3.5 9.3C3.5 6.5 5.7 4.5 8.2 4.5c1.6 0 3 .8 3.8 2.1.8-1.3 2.2-2.1 3.8-2.1 2.5 0 4.7 2 4.7 4.8 0 5.9-8.5 11.1-8.5 11.1Z"/>
+      </symbol>
+
+      <symbol id="icon-alert" viewBox="0 0 24 24">
+        <path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M12 3.5 2.8 19.5h18.4L12 3.5Z"/>
+        <line x1="12" y1="10" x2="12" y2="14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        <circle cx="12" cy="17" r="1" fill="currentColor"/>
+      </symbol>
+
+      <symbol id="icon-close" viewBox="0 0 24 24">
+        <line x1="5" y1="5" x2="19" y2="19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <line x1="19" y1="5" x2="5" y2="19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </symbol>
+
+      <symbol id="icon-cart" viewBox="0 0 24 24">
+        <circle cx="9" cy="20" r="1.4" fill="currentColor"/>
+        <circle cx="17" cy="20" r="1.4" fill="currentColor"/>
+        <path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M3 4h2.4l2.2 11.2a1.6 1.6 0 0 0 1.6 1.3h7.9a1.6 1.6 0 0 0 1.6-1.3L20.5 8H6.1"/>
+      </symbol>
+
+      <symbol id="icon-bag" viewBox="0 0 24 24">
+        <path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"
+              d="M5 8h14l-1.1 12.1a1.8 1.8 0 0 1-1.8 1.6H7.9a1.8 1.8 0 0 1-1.8-1.6L5 8Z"/>
+        <path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"
+              d="M8.6 10.5V6.4a3.4 3.4 0 0 1 6.8 0v4.1"/>
+      </symbol>
+
+      <symbol id="icon-trash" viewBox="0 0 24 24">
+        <path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"
+              d="M4.5 6.5h15M9.5 6.5V4.8a1.3 1.3 0 0 1 1.3-1.3h2.4a1.3 1.3 0 0 1 1.3 1.3v1.7M6.5 6.5l.9 13a1.7 1.7 0 0 0 1.7 1.6h5.8a1.7 1.7 0 0 0 1.7-1.6l.9-13"/>
+        <line x1="10" y1="10.5" x2="10" y2="17" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        <line x1="14" y1="10.5" x2="14" y2="17" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      </symbol>
+
+      <symbol id="icon-funnel" viewBox="0 0 24 24">
+        <path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"
+              d="M3.5 5h17l-6.6 7.6v5.2L10.1 20v-7.4L3.5 5Z"/>
+      </symbol>
+
+      <symbol id="icon-check" viewBox="0 0 24 24">
+        <path fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"
+              d="M4.5 12.5 10 18 19.5 6.5"/>
+      </symbol>
+
+      <symbol id="icon-reset" viewBox="0 0 24 24">
+        <path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"
+              d="M4.5 12a7.5 7.5 0 1 1 2.2 5.3M4.5 12V7M4.5 12h5"/>
+      </symbol>
+
+      <symbol id="icon-cutlery" viewBox="0 0 24 24">
+        <path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"
+              d="M7 3v5.2a2.3 2.3 0 0 0 2.3 2.3H9.3M7 3v18M4.7 3v5.2M9.3 3v5.2"/>
+        <path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"
+              d="M17.5 3c-1.7 1.8-2.5 4.4-2.5 7 0 1.7 1 3 2.5 3V21M17.5 3v10"/>
+      </symbol>
+
+      <symbol id="icon-allergen-dot" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2.2"/>
+        <line x1="12" y1="7.5" x2="12" y2="13.2" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+        <circle cx="12" cy="16.8" r="1.3" fill="currentColor"/>
+      </symbol>
+
+      <symbol id="icon-plate" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.6"/>
+        <circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.6"/>
+      </symbol>
+    </defs>
+  </svg>
+
+  <!-- ============================================================
+       PANTALLA 1 · SPLASH SCREEN
+       ============================================================ -->
+  <main class="splash" id="splash">
+
+    <button class="lang-switch lang-switch--dark" type="button" data-lang-switch aria-label="Cambiar idioma / Change language">
+      <span data-lang-es class="lang-on">ES</span>
+      <span class="lang-sep">|</span>
+      <span data-lang-en class="lang-off">EN</span>
+    </button>
+
+    <div class="embers" aria-hidden="true"></div>
+
+    <header class="brand">
+      <div class="brand__logo" aria-hidden="true">
+        <svg viewBox="0 0 64 64" style="color:#f7f5f2" role="img" aria-label="Logotipo de Taberna y Brasa">
+          <use href="#icon-logo"></use>
+        </svg>
+      </div>
+
+      <h1 class="brand__title">Taberna &amp; Brasa</h1>
+      <p class="brand__subtitle" data-i18n="subtitle">Sabores de Valencia</p>
+      <address class="brand__address">Calle Lanjarón s/n · Alacuás, Valencia</address>
+    </header>
+
+    <nav class="actions" aria-label="Acciones principales">
+
+      <button class="btn" type="button" id="openMenuBtn">
+        <svg aria-hidden="true"><use href="#icon-menu-card"></use></svg>
+        <span data-i18n="viewMenu">Ver Carta</span>
+      </button>
+
+      <a class="btn btn--whatsapp" href="https://wa.me/34600000000" rel="noopener" target="_blank">
+        <svg aria-hidden="true"><use href="#icon-whatsapp"></use></svg>
+        <span data-i18n="bookTable">Reservar Mesa</span>
+      </a>
+
+    </nav>
+
+  </main>
+
+  <!-- ============================================================
+       PANTALLA 2 · CARTA (papel crema premium)
+       ============================================================ -->
+  <section class="menu-screen" id="menuScreen" aria-hidden="true">
+
+    <header class="menu-header">
+      <div class="menu-header__brand">
+        <span class="menu-header__logo" aria-hidden="true">
+          <svg viewBox="0 0 64 64" style="color:#2c2c2c"><use href="#icon-logo"></use></svg>
+        </span>
+        <span class="menu-header__brand-text">
+          <span class="menu-header__name">Taberna &amp; Brasa</span>
+          <span class="menu-header__slogan">Tu opinión importa 🌟 🌟</span>
+        </span>
+      </div>
+
+      <button class="lang-switch lang-switch--light" type="button" data-lang-switch aria-label="Cambiar idioma / Change language">
+        <span data-lang-es class="lang-on">ES</span>
+        <span class="lang-sep">|</span>
+        <span data-lang-en class="lang-off">EN</span>
+      </button>
+    </header>
+
+    <div class="allergen-row">
+      <aside class="allergen-banner" role="note">
+        <svg aria-hidden="true"><use href="#icon-alert"></use></svg>
+        <p><strong data-i18n="allergenLead">Aviso:</strong> <span data-i18n="allergenBody">Si tiene alguna alergia o intolerancia, consulte con nuestro personal. Disponemos de carta de alérgenos.</span></p>
+      </aside>
+
+      <button class="filter-btn" type="button" id="filterBtn" aria-haspopup="dialog" aria-expanded="false" aria-controls="filterSidebar" aria-label="Filtrar alérgenos">
+        <svg aria-hidden="true"><use href="#icon-funnel"></use></svg>
+        <span class="filter-btn__badge" id="filterBadge" hidden>0</span>
+      </button>
+    </div>
+
+    <nav class="categories" id="categoriesNav" aria-label="Categorías de la carta"></nav>
+
+    <ul class="dish-list" id="dishList"></ul>
+
+  </section>
+
+  <!-- ============================================================
+       PÍLDORA FLOTANTE (solo vive en la pantalla de la carta)
+       ============================================================ -->
+  <nav class="floating-pill" id="floatingPill" aria-label="Contacto y redes sociales" aria-hidden="true">
+    <a class="pill-link pill-link--whatsapp" href="https://wa.me/34600000000" rel="noopener" target="_blank" aria-label="WhatsApp">
+      <svg aria-hidden="true"><use href="#icon-whatsapp"></use></svg>
+    </a>
+    <a class="pill-link pill-link--instagram" href="https://instagram.com" rel="noopener" target="_blank" aria-label="Instagram">
+      <svg aria-hidden="true"><use href="#icon-instagram"></use></svg>
+    </a>
+    <a class="pill-link pill-link--tiktok" href="https://tiktok.com" rel="noopener" target="_blank" aria-label="TikTok">
+      <svg aria-hidden="true"><use href="#icon-tiktok"></use></svg>
+    </a>
+    <a class="pill-link pill-link--facebook" href="https://facebook.com" rel="noopener" target="_blank" aria-label="Facebook">
+      <svg aria-hidden="true"><use href="#icon-facebook"></use></svg>
+    </a>
+  </nav>
+
+  <!-- ============================================================
+       FAB DEL CARRITO (solo visible en la carta)
+       ============================================================ -->
+  <button class="cart-fab" type="button" id="cartFab" aria-haspopup="dialog" aria-expanded="false" aria-controls="cartPanel" aria-label="Tu pedido">
+    <svg aria-hidden="true"><use href="#icon-bag"></use></svg>
+    <span class="cart-fab__badge" id="cartBadge">0</span>
+  </button>
+
+  <!-- ============================================================
+       SIDEBAR DE FILTRADO DE ALÉRGENOS
+       ============================================================ -->
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <aside class="filter-sidebar" id="filterSidebar" role="dialog" aria-modal="true" aria-labelledby="filterTitle">
+    <div class="filter-sidebar__head">
+      <h2 class="filter-sidebar__title" id="filterTitle">
+        <svg aria-hidden="true"><use href="#icon-funnel"></use></svg>
+        <span data-i18n="filterTitle">Filtrar alérgenos</span>
+      </h2>
+      <button class="filter-sidebar__close" type="button" id="sidebarClose" aria-label="Cerrar">
+        <svg aria-hidden="true"><use href="#icon-close"></use></svg>
+      </button>
+    </div>
+
+    <p class="filter-sidebar__hint" data-i18n="filterHint">Marca un alérgeno para ocultar de la carta los platos que lo contienen.</p>
+
+    <ul class="filter-list" id="filterList"></ul>
+
+    <button class="clear-filters-btn" type="button" id="clearFiltersBtn" disabled>
+      <svg aria-hidden="true"><use href="#icon-reset"></use></svg>
+      <span data-i18n="clearFilters">Limpiar filtros</span>
+    </button>
+  </aside>
+
+  <!-- ============================================================
+       PANEL "TU PEDIDO" (slide-up)
+       ============================================================ -->
+  <div class="cart-overlay" id="cartOverlay"></div>
+
+  <section class="cart-panel" id="cartPanel" role="dialog" aria-modal="true" aria-labelledby="cartTitle">
+    <header class="cart-panel__head">
+      <h2 class="cart-panel__title" id="cartTitle">
+        <svg aria-hidden="true"><use href="#icon-bag"></use></svg>
+        <span data-i18n="cartTitle">Tu pedido</span>
+      </h2>
+      <button class="cart-panel__close" type="button" id="cartClose" aria-label="Cerrar">
+        <svg aria-hidden="true"><use href="#icon-close"></use></svg>
+      </button>
+    </header>
+
+    <div class="cart-panel__scroll">
+
+      <div class="cart-empty" id="cartEmpty">
+        <svg aria-hidden="true"><use href="#icon-bag"></use></svg>
+        <p data-i18n="cartEmpty">Tu pedido está vacío. Añade platos desde la carta.</p>
+      </div>
+
+      <ul class="cart-items" id="cartItems"></ul>
+
+      <div class="cart-total" id="cartTotalBlock">
+        <span class="cart-total__label" data-i18n="totalLabel">Total</span>
+        <span class="cart-total__value" id="cartTotalValue">0,00 €</span>
+      </div>
+
+      <form class="cart-form" id="cartForm" novalidate>
+        <div class="cart-form__field">
+          <label class="cart-form__label" for="fieldTable" data-i18n="fieldTable">Mesa o indicación (opcional)</label>
+          <input class="cart-form__input" id="fieldTable" name="table" type="text" autocomplete="off">
+        </div>
+
+        <button class="cart-confirm-btn cart-calc-btn" type="button" id="cartCalcBtn" style="background:#8a857c;box-shadow:none;">
+          <svg aria-hidden="true"><use href="#icon-reset"></use></svg>
+          <span data-i18n="calcOnly">Solo calcular</span>
+        </button>
+
+        <button class="cart-confirm-btn" type="submit" id="cartConfirmBtn" disabled>
+          <svg aria-hidden="true"><use href="#icon-whatsapp"></use></svg>
+          <span data-i18n="confirmOrder">Confirmar y Enviar a Cocina</span>
+        </button>
+      </form>
+
+    </div>
+  </section>
+
+  <!-- ============================================================
+       MODAL DE DETALLE DE PLATO
+       ============================================================ -->
+  <div class="dish-modal" id="dishModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+
+    <div class="dish-modal__media">
+      <div class="placeholder-frame" aria-hidden="true">
+        <span class="dish-emoji" id="modalEmoji">&#127869;</span>
+      </div>
+      <button class="dish-modal__close" type="button" id="modalClose" aria-label="Cerrar">
+        <svg aria-hidden="true"><use href="#icon-close"></use></svg>
+      </button>
+    </div>
+
+    <div class="dish-modal__body">
+      <span class="dish-modal__badge" id="modalBadge" hidden>
+        <svg aria-hidden="true"><use href="#icon-star"></use></svg>
+        <span data-i18n="recommended">Recomendado</span>
+      </span>
+
+      <h2 class="dish-modal__title" id="modalTitle"></h2>
+      <p class="dish-modal__desc" id="modalDesc"></p>
+
+      <div class="allergen-tags allergen-tags--modal" id="modalAllergens"></div>
+
+      <div class="dish-modal__row">
+        <span class="dish-modal__price" id="modalPrice"></span>
+
+        <div class="qty-control" role="group" aria-label="Cantidad">
+          <button class="qty-btn" type="button" id="qtyMinus" aria-label="Quitar una unidad">&minus;</button>
+          <input class="qty-value" id="qtyValue" type="number" value="1" min="1" max="20" readonly aria-live="polite">
+          <button class="qty-btn" type="button" id="qtyPlus" aria-label="Añadir una unidad">+</button>
+        </div>
+      </div>
+
+      <button class="add-cart-btn" type="button" id="addCartBtn">
+        <svg aria-hidden="true"><use href="#icon-cart"></use></svg>
+        <span id="addCartLabel" data-i18n="addToCart">Añadir al carrito</span>
+      </button>
+    </div>
+
+  </div>
+
+  <!-- ============================================================
+       LÓGICA DE LA APLICACIÓN (Vanilla JS)
+       ============================================================ -->
+  <script>
+    (function () {
+      "use strict";
+
+      /* ----------------------------------------------------------
+         0. CONFIGURACIÓN
+         ---------------------------------------------------------- */
+      var RESTAURANT_WHATSAPP = "34600000000";
+
+      /* === MODO ADMINISTRADOR (oculto) ============================
+         Contraseña del hostelero: cámbiala aquí si lo necesitas. */
+      var ADMIN_PASSWORD = "brasa2026";
+
+      /* ----------------------------------------------------------
+         1. DICCIONARIO DE TEXTOS DE INTERFAZ (ES / EN)
+         ---------------------------------------------------------- */
+      var I18N = {
+        es: {
+          subtitle: "Sabores de Valencia",
+          viewMenu: "Ver Carta",
+          bookTable: "Reservar Mesa",
+          allergenLead: "Aviso:",
+          allergenBody: "Si tiene alguna alergia o intolerancia, consulte con nuestro personal. Disponemos de carta de alérgenos.",
+          recommended: "Recomendado",
+          addToCart: "Añadir al carrito",
+          added: "Añadido ✓",
+          emptyCategory: "Estamos preparando los platos de esta sección.\nMuy pronto disponibles en la carta.",
+          noResults: "Ningún plato de esta sección supera el filtro actual.\nPrueba a limpiar los filtros.",
+          closeLabel: "Cerrar",
+          favAdd: "Añadir a favoritos",
+          favRemove: "Quitar de favoritos",
+          allergensLabel: "Alérgenos",
+          filterTitle: "Filtrar alérgenos",
+          filterHint: "Marca un alérgeno para ocultar de la carta los platos que lo contienen.",
+          clearFilters: "Limpiar filtros",
+          filterBtnLabel: "Filtrar alérgenos",
+          cartTitle: "Tu pedido",
+          cartFabLabel: "Tu pedido",
+          cartEmpty: "Tu pedido está vacío. Añade platos desde la carta.",
+          totalLabel: "Total",
+          fieldTable: "Mesa o indicación (opcional)",
+          calcOnly: "Solo calcular",
+          confirmOrder: "Confirmar y Enviar a Cocina",
+          waHeader: "Nuevo pedido — Taberna & Brasa",
+          waTable: "Mesa / Indicación",
+          waTotal: "Total",
+          removeItem: "Eliminar del pedido"
+        },
+        en: {
+          subtitle: "Flavours of Valencia",
+          viewMenu: "View Menu",
+          bookTable: "Book a Table",
+          allergenLead: "Notice:",
+          allergenBody: "If you have any food allergy or intolerance, please consult our staff. Allergen menu available.",
+          recommended: "Recommended",
+          addToCart: "Add to cart",
+          added: "Added ✓",
+          emptyCategory: "We are preparing the dishes for this section.\nComing to the menu very soon.",
+          noResults: "No dish in this section passes the current filter.\nTry clearing the filters.",
+          closeLabel: "Close",
+          favAdd: "Add to favourites",
+          favRemove: "Remove from favourites",
+          allergensLabel: "Allergens",
+          filterTitle: "Allergen filter",
+          filterHint: "Tick an allergen to hide the dishes that contain it from the menu.",
+          clearFilters: "Clear filters",
+          filterBtnLabel: "Filter allergens",
+          cartTitle: "Your Order",
+          cartFabLabel: "Your Order",
+          cartEmpty: "Your order is empty. Add dishes from the menu.",
+          totalLabel: "Total",
+          fieldTable: "Table or note (optional)",
+          calcOnly: "Just calculate",
+          confirmOrder: "Confirm & Send to Kitchen",
+          waHeader: "New order — Taberna & Brasa",
+          waTable: "Table / Note",
+          waTotal: "Total",
+          removeItem: "Remove from order"
+        }
+      };
+
+      /* ----------------------------------------------------------
+         2. CATÁLOGO DE ALÉRGENOS DE DECLARACIÓN OBLIGATORIA (UE)
+         ---------------------------------------------------------- */
+      var ALLERGENS = {
+        gluten:      { es: "Gluten",            en: "Gluten",      tint: "amber" },
+        crustaceans: { es: "Crustáceos",        en: "Crustaceans", tint: "teal" },
+        eggs:        { es: "Huevos",            en: "Eggs",        tint: "yellow" },
+        fish:        { es: "Pescado",           en: "Fish",        tint: "teal" },
+        peanuts:     { es: "Cacahuetes",        en: "Peanuts",     tint: "purple" },
+        soy:         { es: "Soja",              en: "Soy",         tint: "brown" },
+        dairy:       { es: "Lácteos",           en: "Dairy",       tint: "blue" },
+        nuts:        { es: "Frutos de cáscara", en: "Tree Nuts",   tint: "purple" },
+        celery:      { es: "Apio",              en: "Celery",      tint: "olive" },
+        mustard:     { es: "Mostaza",           en: "Mustard",     tint: "red" },
+        sesame:      { es: "Sésamo",            en: "Sesame",      tint: "brown" },
+        sulphites:   { es: "Sulfitos",          en: "Sulphites",   tint: "red" },
+        lupin:       { es: "Altramuces",        en: "Lupin",       tint: "olive" },
+        molluscs:    { es: "Moluscos",          en: "Molluscs",    tint: "green" }
+      };
+
+      /* ----------------------------------------------------------
+         3. CATEGORÍAS DE LA CARTA
+         ---------------------------------------------------------- */
+      var CATEGORIES = [
+        { id: "tapas",     es: "Tapas",             en: "Tapas" },
+        { id: "raciones",  es: "Raciones",          en: "Sharing Plates" },
+        { id: "carnes",    es: "Carnes a la Brasa", en: "Grilled Meats" },
+        { id: "postres",   es: "Postres",           en: "Desserts" },
+        { id: "bodega",    es: "Bodega",            en: "Cellar" },
+        { id: "vinos",     es: "Carta de vinos",    en: "Wine List" },
+        { id: "cervezas",  es: "Cervezas",          en: "Beers" },
+        { id: "refrescos", es: "Refrescos",         en: "Soft Drinks" }
+      ];
+
+      /* ----------------------------------------------------------
+         4. CARTA COMPLETA · 5 platos por categoría (precio numérico)
+         ---------------------------------------------------------- */
+      /*__DISHES_START__*/
+      var DISHES = [
+        /* ----- TAPAS ----- */
+        {
+          id: "croquetas", category: "tapas", price: 9.50, recommended: true,
+          allergens: ["gluten", "dairy"],
+          es: { name: "Croquetas de Jamón Ibérico (6 uds)",
+                desc: "Bechamel cremosa con jamón ibérico de bellota, rebozado crujiente.",
+                longDesc: "Croquetas caseras elaboradas cada mañana con una bechamel cremosa infusionada en jamón ibérico de bellota, empanadas en panko fino y fritas al momento. Exterior dorado y crujiente, corazón fundente." },
+          en: { name: "Homemade Iberian Ham Croquettes (6 pcs)",
+                desc: "Creamy béchamel with acorn-fed Iberian ham, crispy coating.",
+                longDesc: "Homemade croquettes prepared every morning with a creamy béchamel infused with acorn-fed Iberian ham, coated in fine panko and fried to order. Golden crispy outside, melting heart." }
+        },
+        {
+          id: "bravas", category: "tapas", price: 6.80, recommended: false,
+          allergens: ["eggs"],
+          es: { name: "Patatas Bravas con Alioli de Ajo Asado",
+                desc: "Patata crujiente, salsa brava casera y alioli de ajo asado.",
+                longDesc: "Patatas confitadas a baja temperatura y terminadas en fritura fuerte: crujientes por fuera, cremosas por dentro. Con salsa brava de pimentón de la Vera y alioli sedoso de ajo asado." },
+          en: { name: "Authentic Crispy Potatoes with Alioli",
+                desc: "Crispy potatoes, homemade brava sauce and roasted garlic alioli.",
+                longDesc: "Slow-confited potatoes finished with a high-heat fry: crispy outside, creamy inside. Served with La Vera paprika brava sauce and silky roasted garlic alioli." }
+        },
+        {
+          id: "ensaladilla", category: "tapas", price: 7.20, recommended: false,
+          allergens: ["eggs", "fish"],
+          es: { name: "Ensaladilla Rusa con Ventresca",
+                desc: "Patata, zanahoria, mahonesa casera y ventresca de atún.",
+                longDesc: "Nuestra ensaladilla de siempre: patata y zanahoria cocidas en su punto, mahonesa casera montada al momento y lascas generosas de ventresca de atún." },
+          en: { name: "Spanish Potato Salad with Tuna Belly",
+                desc: "Potato, carrot, homemade mayonnaise and tuna belly.",
+                longDesc: "Our classic ensaladilla: perfectly cooked potato and carrot, freshly whipped homemade mayonnaise and generous flakes of tuna belly." }
+        },
+        {
+          id: "boquerones", category: "tapas", price: 6.50, recommended: false,
+          allergens: ["fish"],
+          es: { name: "Boquerones en Vinagre",
+                desc: "Boquerón fresco, vinagre suave, ajo y perejil.",
+                longDesc: "Boquerones frescos marinados en vinagre suave con ajo laminado y perejil, terminados con un buen aceite de oliva virgen extra." },
+          en: { name: "Anchovies in Vinegar",
+                desc: "Fresh anchovies, mild vinegar, garlic and parsley.",
+                longDesc: "Fresh anchovies marinated in mild vinegar with sliced garlic and parsley, finished with fine extra virgin olive oil." }
+        },
+        {
+          id: "tortilla", category: "tapas", price: 5.90, recommended: false,
+          allergens: ["eggs"],
+          es: { name: "Tortilla Española Melosa",
+                desc: "Huevo de corral, patata confitada y punto meloso.",
+                longDesc: "Tortilla de patata elaborada con huevos de corral y patata confitada en aceite de oliva, cuajada al punto meloso de la casa." },
+          en: { name: "Creamy Spanish Omelette",
+                desc: "Free-range eggs, confit potato, soft creamy centre.",
+                longDesc: "Spanish omelette made with free-range eggs and potatoes confited in olive oil, cooked to our signature creamy point." }
+        },
+
+        /* ----- RACIONES ----- */
+        {
+          id: "pulpo", category: "raciones", price: 21.00, recommended: false,
+          allergens: ["molluscs"],
+          es: { name: "Pulpo a la Brasa con Cachelos",
+                desc: "Pulpo tierno marcado en brasa, cachelos y pimentón ahumado.",
+                longDesc: "Tentáculo de pulpo cocido en su punto y marcado sobre brasa de encina hasta caramelizar. Sobre cachelos cremosos, AOVE, escamas de sal y pimentón de la Vera." },
+          en: { name: "Grilled Octopus with Potatoes",
+                desc: "Tender charcoal-seared octopus, potatoes and smoked paprika.",
+                longDesc: "Octopus tentacle cooked to the point and seared over holm-oak embers until caramelised. Over creamy potatoes with olive oil, salt flakes and smoked paprika." }
+        },
+        {
+          id: "gambas", category: "raciones", price: 14.50, recommended: true,
+          allergens: ["crustaceans"],
+          es: { name: "Gambas al Ajillo",
+                desc: "Gamba blanca, ajo laminado, guindilla y aceite hirviendo.",
+                longDesc: "Gamba blanca salteada en cazuela de barro con ajo laminado, guindilla y aceite de oliva hirviendo. Para mojar pan sin remedio." },
+          en: { name: "Garlic Prawns",
+                desc: "White prawns, sliced garlic, chilli and sizzling olive oil.",
+                longDesc: "White prawns sautéed in a clay dish with sliced garlic, chilli and sizzling olive oil. Bread-dipping is mandatory." }
+        },
+        {
+          id: "calamares", category: "raciones", price: 12.90, recommended: false,
+          allergens: ["molluscs", "gluten"],
+          es: { name: "Calamares a la Andaluza",
+                desc: "Calamar fresco en harina de fritura, limón y alioli suave.",
+                longDesc: "Anillas de calamar fresco rebozadas en harina de fritura andaluza, fritas al momento y servidas con limón y alioli suave." },
+          en: { name: "Andalusian-style Fried Squid",
+                desc: "Fresh squid in frying flour, lemon and mild alioli.",
+                longDesc: "Fresh squid rings coated in Andalusian frying flour, fried to order and served with lemon and mild alioli." }
+        },
+        {
+          id: "jamon", category: "raciones", price: 18.00, recommended: false,
+          allergens: [],
+          es: { name: "Jamón Ibérico de Bellota (80g)",
+                desc: "Cortado a cuchillo, con picos artesanos.",
+                longDesc: "Jamón ibérico de bellota cortado a cuchillo al momento, servido a temperatura con picos artesanos." },
+          en: { name: "Acorn-fed Iberian Ham (80g)",
+                desc: "Hand-carved, served with artisan breadsticks.",
+                longDesc: "Acorn-fed Iberian ham hand-carved to order, served at temperature with artisan breadsticks." }
+        },
+        {
+          id: "manchego", category: "raciones", price: 11.50, recommended: false,
+          allergens: ["dairy"],
+          es: { name: "Queso Manchego Curado D.O.",
+                desc: "Cuñas de manchego curado con membrillo y nueces.",
+                longDesc: "Cuñas de queso manchego curado con Denominación de Origen, acompañadas de dulce de membrillo casero." },
+          en: { name: "Cured Manchego Cheese P.D.O.",
+                desc: "Cured manchego wedges with quince and walnuts.",
+                longDesc: "Wedges of P.D.O. cured manchego cheese, served with homemade quince paste." }
+        },
+
+        /* ----- CARNES A LA BRASA ----- */
+        {
+          id: "entrecot", category: "carnes", price: 24.50, recommended: true,
+          allergens: [],
+          es: { name: "Entrecot de Vaca Vieja Madurada (350g)",
+                desc: "Maduración 45 días, brasa de encina, sal en escamas.",
+                longDesc: "Entrecot de vaca vieja con 45 días de maduración, asado lentamente sobre brasa de encina y terminado con sal en escamas. Infiltración excepcional y guarnición de la casa." },
+          en: { name: "Aged Ribeye Steak (350g)",
+                desc: "45-day dry-aged, holm-oak embers, flaky salt finish.",
+                longDesc: "Old-cow ribeye dry-aged for 45 days, slowly grilled over holm-oak embers and finished with flaky salt. Exceptional marbling, house side dish." }
+        },
+        {
+          id: "chuleton", category: "carnes", price: 49.00, recommended: true,
+          allergens: [],
+          es: { name: "Chuletón de Vaca Vieja (1kg, 2 pers.)",
+                desc: "Pieza de 1kg a la brasa, para compartir.",
+                longDesc: "Chuletón de vaca vieja de 1 kg asado sobre brasa viva y terminado en mesa sobre piedra caliente. Pensado para compartir entre dos." },
+          en: { name: "Old-cow T-bone Steak (1kg, for 2)",
+                desc: "1kg cut over embers, made for sharing.",
+                longDesc: "1 kg old-cow T-bone grilled over live embers and finished at the table on a hot stone. Made for two to share." }
+        },
+        {
+          id: "secreto", category: "carnes", price: 16.90, recommended: false,
+          allergens: [],
+          es: { name: "Secreto Ibérico a la Brasa",
+                desc: "Corte jugoso de cerdo ibérico, brasa y sal gorda.",
+                longDesc: "Secreto de cerdo ibérico marcado sobre brasa de encina, jugoso y con su grasa dorada, terminado con sal gorda." },
+          en: { name: "Grilled Iberian Pork Secreto",
+                desc: "Juicy Iberian pork cut, embers and coarse salt.",
+                longDesc: "Iberian pork secreto seared over holm-oak embers, juicy with its golden fat, finished with coarse salt." }
+        },
+        {
+          id: "costillas", category: "carnes", price: 15.50, recommended: false,
+          allergens: ["soy", "mustard"],
+          es: { name: "Costillas Glaseadas a Baja Temperatura",
+                desc: "12h a baja temperatura, glaseado BBQ casero.",
+                longDesc: "Costillar cocinado 12 horas a baja temperatura y terminado en brasa con nuestro glaseado BBQ casero (contiene soja y mostaza)." },
+          en: { name: "Slow-cooked Glazed Ribs",
+                desc: "12h low-temperature, homemade BBQ glaze.",
+                longDesc: "Rib rack cooked for 12 hours at low temperature and finished over embers with our homemade BBQ glaze (contains soy and mustard)." }
+        },
+        {
+          id: "pollo", category: "carnes", price: 13.90, recommended: false,
+          allergens: [],
+          es: { name: "Pollo de Corral a la Brasa",
+                desc: "Medio pollo de corral, limón y hierbas de la huerta.",
+                longDesc: "Medio pollo de corral marinado en limón y hierbas de la huerta valenciana, asado lentamente sobre brasa." },
+          en: { name: "Grilled Free-range Chicken",
+                desc: "Half free-range chicken, lemon and garden herbs.",
+                longDesc: "Half free-range chicken marinated in lemon and Valencian garden herbs, slowly grilled over embers." }
+        },
+
+        /* ----- POSTRES ----- */
+        {
+          id: "tarta-queso", category: "postres", price: 6.50, recommended: true,
+          allergens: ["dairy", "eggs", "gluten"],
+          es: { name: "Tarta de Queso Cremosa al Horno",
+                desc: "Corazón fundente, base de galleta artesana.",
+                longDesc: "Tarta de queso horneada cada día, de corazón fundente, sobre base de galleta artesana." },
+          en: { name: "Baked Creamy Cheesecake",
+                desc: "Melting centre, artisan biscuit base.",
+                longDesc: "Cheesecake baked daily with a melting centre over an artisan biscuit base." }
+        },
+        {
+          id: "flan", category: "postres", price: 5.20, recommended: false,
+          allergens: ["dairy", "eggs"],
+          es: { name: "Flan de Huevo Casero",
+                desc: "Huevo de corral, caramelo tostado y nata.",
+                longDesc: "Flan de huevo de corral cocido al baño maría, con caramelo tostado y un toque de nata." },
+          en: { name: "Homemade Egg Flan",
+                desc: "Free-range egg, toasted caramel and cream.",
+                longDesc: "Free-range egg flan cooked in a bain-marie, with toasted caramel and a touch of cream." }
+        },
+        {
+          id: "torrija", category: "postres", price: 6.20, recommended: false,
+          allergens: ["gluten", "dairy", "eggs"],
+          es: { name: "Torrija Caramelizada con Helado",
+                desc: "Brioche infusionado, caramelizada y helado de vainilla.",
+                longDesc: "Torrija de brioche infusionado en leche y canela, caramelizada al momento y servida con helado de vainilla." },
+          en: { name: "Caramelised Torrija with Ice Cream",
+                desc: "Infused brioche, caramelised, vanilla ice cream.",
+                longDesc: "Brioche torrija infused in milk and cinnamon, caramelised to order and served with vanilla ice cream." }
+        },
+        {
+          id: "helado-turron", category: "postres", price: 5.50, recommended: false,
+          allergens: ["dairy", "nuts"],
+          es: { name: "Helado Artesano de Turrón",
+                desc: "Turrón de Jijona, almendra marcona garrapiñada.",
+                longDesc: "Helado artesano de turrón de Jijona coronado con almendra marcona garrapiñada (contiene frutos de cáscara)." },
+          en: { name: "Artisan Turrón Ice Cream",
+                desc: "Jijona turrón, caramelised marcona almonds.",
+                longDesc: "Artisan Jijona turrón ice cream topped with caramelised marcona almonds (contains tree nuts)." }
+        },
+        {
+          id: "fruta", category: "postres", price: 4.50, recommended: false,
+          allergens: [],
+          es: { name: "Fruta de Temporada de la Huerta",
+                desc: "Selección diaria de fruta valenciana.",
+                longDesc: "Selección diaria de fruta fresca de la huerta valenciana, cortada al momento." },
+          en: { name: "Seasonal Orchard Fruit",
+                desc: "Daily selection of Valencian fruit.",
+                longDesc: "Daily selection of fresh fruit from the Valencian orchard, cut to order." }
+        },
+
+        /* ----- BODEGA ----- */
+        {
+          id: "vermut", category: "bodega", price: 3.80, recommended: true,
+          allergens: ["sulphites"],
+          es: { name: "Vermut Artesano de Grifo",
+                desc: "Vermut rojo artesano, naranja y aceituna.",
+                longDesc: "Vermut rojo artesano servido de grifo, con rodaja de naranja y aceituna. Aperitivo de la casa." },
+          en: { name: "Artisan Vermouth on Tap",
+                desc: "Artisan red vermouth, orange and olive.",
+                longDesc: "Artisan red vermouth served on tap with an orange slice and an olive. The house aperitif." }
+        },
+        {
+          id: "sangria", category: "bodega", price: 12.00, recommended: false,
+          allergens: ["sulphites"],
+          es: { name: "Sangría de la Casa (1L)",
+                desc: "Vino tinto, fruta fresca y toque de canela.",
+                longDesc: "Sangría preparada al momento con vino tinto, fruta fresca de temporada y un toque de canela. Jarra de 1 litro." },
+          en: { name: "House Sangría (1L)",
+                desc: "Red wine, fresh fruit and a hint of cinnamon.",
+                longDesc: "Sangría made to order with red wine, fresh seasonal fruit and a hint of cinnamon. 1-litre jug." }
+        },
+        {
+          id: "tinto-verano", category: "bodega", price: 3.20, recommended: false,
+          allergens: ["sulphites"],
+          es: { name: "Tinto de Verano con Limón",
+                desc: "Vino tinto, gaseosa de limón y mucho hielo.",
+                longDesc: "Tinto de verano bien frío con gaseosa de limón, rodaja de limón y mucho hielo." },
+          en: { name: "Summer Red Wine with Lemon",
+                desc: "Red wine, lemon soda and plenty of ice.",
+                longDesc: "Ice-cold summer red wine with lemon soda, a lemon slice and plenty of ice." }
+        },
+        {
+          id: "mistela", category: "bodega", price: 3.50, recommended: false,
+          allergens: ["sulphites"],
+          es: { name: "Mistela Valenciana",
+                desc: "Vino dulce de moscatel de la Marina Alta.",
+                longDesc: "Mistela de moscatel de la Marina Alta, dulce y aromática, servida fría como digestivo." },
+          en: { name: "Valencian Mistela",
+                desc: "Sweet muscat wine from Marina Alta.",
+                longDesc: "Muscat mistela from Marina Alta, sweet and aromatic, served cold as a digestif." }
+        },
+        {
+          id: "licor-cafe", category: "bodega", price: 3.00, recommended: false,
+          allergens: [],
+          es: { name: "Licor Café Artesano",
+                desc: "Licor de café de elaboración propia.",
+                longDesc: "Licor de café de elaboración propia, servido frío. El broche tradicional de la sobremesa." },
+          en: { name: "Artisan Coffee Liqueur",
+                desc: "House-made coffee liqueur.",
+                longDesc: "House-made coffee liqueur served cold. The traditional end to a long Spanish lunch." }
+        },
+
+        /* ----- CARTA DE VINOS ----- */
+        {
+          id: "rioja", category: "vinos", price: 18.50, recommended: true,
+          allergens: ["sulphites"],
+          es: { name: "Rioja Crianza D.O.Ca.",
+                desc: "Tempranillo, 12 meses en barrica de roble.",
+                longDesc: "Rioja crianza de tempranillo con 12 meses en barrica de roble americano. Redondo y elegante, ideal con nuestras carnes." },
+          en: { name: "Rioja Crianza D.O.Ca.",
+                desc: "Tempranillo, 12 months in oak barrels.",
+                longDesc: "Tempranillo Rioja crianza aged 12 months in American oak. Round and elegant, ideal with our grilled meats." }
+        },
+        {
+          id: "ribera", category: "vinos", price: 21.00, recommended: false,
+          allergens: ["sulphites"],
+          es: { name: "Ribera del Duero Roble",
+                desc: "Tinta fina, fruta negra y taninos sedosos.",
+                longDesc: "Ribera del Duero de tinta fina con paso por roble. Fruta negra, taninos sedosos y final largo." },
+          en: { name: "Ribera del Duero Oak-aged",
+                desc: "Tinta fina, dark fruit and silky tannins.",
+                longDesc: "Tinta fina Ribera del Duero with oak ageing. Dark fruit, silky tannins and a long finish." }
+        },
+        {
+          id: "albarino", category: "vinos", price: 19.50, recommended: false,
+          allergens: ["sulphites"],
+          es: { name: "Albariño Rías Baixas",
+                desc: "Blanco atlántico, fresco y salino.",
+                longDesc: "Albariño de Rías Baixas, blanco atlántico fresco y salino, perfecto con el pulpo y los mariscos." },
+          en: { name: "Albariño Rías Baixas",
+                desc: "Atlantic white, fresh and saline.",
+                longDesc: "Rías Baixas albariño, a fresh and saline Atlantic white, perfect with octopus and seafood." }
+        },
+        {
+          id: "bobal", category: "vinos", price: 15.00, recommended: false,
+          allergens: ["sulphites"],
+          es: { name: "Bobal Utiel-Requena",
+                desc: "Variedad valenciana, fruta madura y especias.",
+                longDesc: "Bobal de Utiel-Requena, la variedad valenciana por excelencia: fruta madura, especias y carácter mediterráneo." },
+          en: { name: "Bobal Utiel-Requena",
+                desc: "Valencian variety, ripe fruit and spice.",
+                longDesc: "Bobal from Utiel-Requena, the quintessential Valencian variety: ripe fruit, spice and Mediterranean character." }
+        },
+        {
+          id: "cava", category: "vinos", price: 17.50, recommended: false,
+          allergens: ["sulphites"],
+          es: { name: "Cava Brut Nature Reserva",
+                desc: "Burbuja fina, 24 meses de crianza.",
+                longDesc: "Cava brut nature reserva con 24 meses de crianza en rima. Burbuja fina y elegante para empezar o celebrar." },
+          en: { name: "Cava Brut Nature Reserva",
+                desc: "Fine bubbles, 24 months ageing.",
+                longDesc: "Brut nature reserva cava aged 24 months on lees. Fine, elegant bubbles to start or to celebrate." }
+        },
+
+        /* ----- CERVEZAS ----- */
+        {
+          id: "cana", category: "cervezas", price: 2.20, recommended: false,
+          allergens: ["gluten"],
+          es: { name: "Caña de Barril",
+                desc: "Lager bien tirada, espuma cremosa.",
+                longDesc: "Caña de cerveza lager bien tirada, fría y con su espuma cremosa de dos dedos." },
+          en: { name: "Draught Beer (Caña)",
+                desc: "Well-poured lager, creamy head.",
+                longDesc: "A well-poured small draught lager, ice cold with its creamy two-finger head." }
+        },
+        {
+          id: "doble", category: "cervezas", price: 3.10, recommended: false,
+          allergens: ["gluten"],
+          es: { name: "Doble de Barril",
+                desc: "El formato grande de nuestra lager de grifo.",
+                longDesc: "El formato grande de nuestra cerveza lager de grifo, para sedes mayores." },
+          en: { name: "Large Draught Beer",
+                desc: "The bigger pour of our tap lager.",
+                longDesc: "The larger serving of our draught lager, for bigger thirsts." }
+        },
+        {
+          id: "ipa", category: "cervezas", price: 4.50, recommended: true,
+          allergens: ["gluten"],
+          es: { name: "IPA Artesana Valenciana",
+                desc: "Lúpulo cítrico, amargor medio, de productor local.",
+                longDesc: "IPA artesana de productor valenciano: lúpulo cítrico, amargor medio y final seco." },
+          en: { name: "Valencian Craft IPA",
+                desc: "Citrus hops, medium bitterness, local brewer.",
+                longDesc: "Craft IPA from a Valencian brewer: citrus hops, medium bitterness and a dry finish." }
+        },
+        {
+          id: "tostada", category: "cervezas", price: 3.60, recommended: false,
+          allergens: ["gluten"],
+          es: { name: "Cerveza Tostada",
+                desc: "Maltas tostadas, notas de caramelo.",
+                longDesc: "Cerveza tostada de maltas seleccionadas con notas de caramelo y pan tostado." },
+          en: { name: "Amber Toasted Beer",
+                desc: "Toasted malts, caramel notes.",
+                longDesc: "Amber beer brewed with selected toasted malts, with caramel and toasted bread notes." }
+        },
+        {
+          id: "sin-alcohol", category: "cervezas", price: 2.50, recommended: false,
+          allergens: ["gluten"],
+          es: { name: "Cerveza Sin Alcohol",
+                desc: "Todo el sabor, 0,0% alcohol.",
+                longDesc: "Cerveza 0,0% con todo el sabor de una lager clásica, bien fría." },
+          en: { name: "Alcohol-free Beer",
+                desc: "All the flavour, 0.0% alcohol.",
+                longDesc: "0.0% beer with all the flavour of a classic lager, served ice cold." }
+        },
+
+        /* ----- REFRESCOS ----- */
+        {
+          id: "agua", category: "refrescos", price: 1.80, recommended: false,
+          allergens: [],
+          es: { name: "Agua Mineral (50cl)",
+                desc: "Con o sin gas, bien fría.",
+                longDesc: "Agua mineral natural de 50 cl, con o sin gas, servida bien fría." },
+          en: { name: "Mineral Water (50cl)",
+                desc: "Still or sparkling, well chilled.",
+                longDesc: "50 cl natural mineral water, still or sparkling, served well chilled." }
+        },
+        {
+          id: "cola", category: "refrescos", price: 2.40, recommended: false,
+          allergens: [],
+          es: { name: "Refresco de Cola",
+                desc: "Clásica, zero o sin cafeína, con limón.",
+                longDesc: "Refresco de cola en sus variantes clásica, zero o sin cafeína, servido con hielo y limón." },
+          en: { name: "Cola Soft Drink",
+                desc: "Classic, zero or caffeine-free, with lemon.",
+                longDesc: "Cola soft drink in classic, zero or caffeine-free versions, served with ice and lemon." }
+        },
+        {
+          id: "limonada", category: "refrescos", price: 3.20, recommended: true,
+          allergens: [],
+          es: { name: "Limonada Casera con Hierbabuena",
+                desc: "Limón exprimido, hierbabuena fresca y hielo picado.",
+                longDesc: "Limonada casera de limón recién exprimido con hierbabuena fresca y hielo picado." },
+          en: { name: "Homemade Mint Lemonade",
+                desc: "Squeezed lemon, fresh mint and crushed ice.",
+                longDesc: "Homemade lemonade with freshly squeezed lemon, fresh mint and crushed ice." }
+        },
+        {
+          id: "horchata", category: "refrescos", price: 3.00, recommended: false,
+          allergens: [],
+          es: { name: "Horchata Valenciana Artesana",
+                desc: "Chufa de Alboraya, recién hecha.",
+                longDesc: "Horchata artesana de chufa de Alboraya, recién hecha y servida muy fría." },
+          en: { name: "Artisan Valencian Horchata",
+                desc: "Alboraya tiger nuts, freshly made.",
+                longDesc: "Artisan horchata made with Alboraya tiger nuts, freshly prepared and served very cold." }
+        },
+        {
+          id: "zumo", category: "refrescos", price: 3.40, recommended: false,
+          allergens: [],
+          es: { name: "Zumo Natural de Naranja Valenciana",
+                desc: "Naranja de la huerta, exprimida al momento.",
+                longDesc: "Zumo de naranja valenciana de la huerta, exprimido al momento de servir." },
+          en: { name: "Fresh Valencian Orange Juice",
+                desc: "Orchard oranges, squeezed to order.",
+                longDesc: "Juice from Valencian orchard oranges, squeezed at the moment of serving." }
+        }
+      ];
+      /*__DISHES_END__*/
+
+      /* ----------------------------------------------------------
+         5. ESTADO GLOBAL DE LA APLICACIÓN
+         ---------------------------------------------------------- */
+      /* Motor del carrito: { dishId: { qty: int } } */
+      let cart = {};
+
+      var state = {
+        lang: "es",
+        activeCategory: "tapas",
+        favorites: {},
+        activeFilters: {},
+        modalDish: null,
+        qty: 1
+      };
+
+      /* ----------------------------------------------------------
+         6. REFERENCIAS AL DOM
+         ---------------------------------------------------------- */
+      var splash          = document.getElementById("splash");
+      var menuScreen      = document.getElementById("menuScreen");
+      var floatingPill    = document.getElementById("floatingPill");
+      var openMenuBtn     = document.getElementById("openMenuBtn");
+      var categoriesNav   = document.getElementById("categoriesNav");
+      var dishList        = document.getElementById("dishList");
+      var dishModal       = document.getElementById("dishModal");
+      var modalBadge      = document.getElementById("modalBadge");
+      var modalTitle      = document.getElementById("modalTitle");
+      var modalDesc       = document.getElementById("modalDesc");
+      var modalPrice      = document.getElementById("modalPrice");
+      var modalAllergens  = document.getElementById("modalAllergens");
+      var modalClose      = document.getElementById("modalClose");
+      var qtyMinus        = document.getElementById("qtyMinus");
+      var qtyPlus         = document.getElementById("qtyPlus");
+      var qtyValue        = document.getElementById("qtyValue");
+      var addCartBtn      = document.getElementById("addCartBtn");
+      var addCartLabel    = document.getElementById("addCartLabel");
+      var filterBtn       = document.getElementById("filterBtn");
+      var filterBadge     = document.getElementById("filterBadge");
+      var filterSidebar   = document.getElementById("filterSidebar");
+      var sidebarOverlay  = document.getElementById("sidebarOverlay");
+      var sidebarClose    = document.getElementById("sidebarClose");
+      var filterList      = document.getElementById("filterList");
+      var clearFiltersBtn = document.getElementById("clearFiltersBtn");
+      var cartFab         = document.getElementById("cartFab");
+      var cartBadge       = document.getElementById("cartBadge");
+      var cartOverlay     = document.getElementById("cartOverlay");
+      var cartPanel       = document.getElementById("cartPanel");
+      var cartClose       = document.getElementById("cartClose");
+      var cartEmptyMsg    = document.getElementById("cartEmpty");
+      var cartItemsList   = document.getElementById("cartItems");
+      var cartTotalValue  = document.getElementById("cartTotalValue");
+      var cartForm        = document.getElementById("cartForm");
+      var cartConfirmBtn  = document.getElementById("cartConfirmBtn");
+      var cartCalcBtn     = document.getElementById("cartCalcBtn");
+      var fieldTable      = document.getElementById("fieldTable");
+
+      /* ----------------------------------------------------------
+         7. UTILIDADES
+         ---------------------------------------------------------- */
+      function t(key) {
+        return I18N[state.lang][key];
+      }
+
+      function findDish(id) {
+        var i;
+        for (i = 0; i < DISHES.length; i++) {
+          if (DISHES[i].id === id) {
+            return DISHES[i];
+          }
+        }
+        return null;
+      }
+
+      /* Formato europeo de precio: 12,50 € */
+      function formatPrice(value) {
+        return value.toFixed(2).replace(".", ",") + " €";
+      }
+
+      /* ----------------------------------------------------------
+         7b. INDEXACIÓN AUTOMÁTICA DE ICONOS 3D (emoji nativo)
+         El icono se resuelve por palabras clave del nombre del
+         plato (ES y EN) y, si no hay coincidencia, por categoría.
+         Platos nuevos en el catálogo reciben icono sin tocar nada.
+         ---------------------------------------------------------- */
+      var ICON_KEYWORDS = [
+        { kw: ["croqueta", "croquette"],                          icon: "\uD83E\uDD5F" }, /* 🥟 */
+        { kw: ["pulpo", "octopus"],                               icon: "\uD83D\uDC19" }, /* 🐙 */
+        { kw: ["calamar", "squid", "sepia"],                      icon: "\uD83E\uDD91" }, /* 🦑 */
+        { kw: ["gamba", "prawn", "shrimp", "langostino"],         icon: "\uD83C\uDF64" }, /* 🍤 */
+        { kw: ["ensaladilla", "ensalada", "salad"],               icon: "\uD83E\uDD57" }, /* 🥗 */
+        { kw: ["boquer", "anchov", "pescado", "fish", "ventresca", "atun", "atún", "tuna"], icon: "\uD83D\uDC1F" }, /* 🐟 */
+        { kw: ["tarta", "cheesecake", "cake", "torrija"],         icon: "\uD83C\uDF70" }, /* 🍰 */
+        { kw: ["flan"],                                           icon: "\uD83C\uDF6E" }, /* 🍮 */
+        { kw: ["patata", "brava", "potato", "fries"],             icon: "\uD83C\uDF5F" }, /* 🍟 */
+        { kw: ["tortilla", "omelette", "huevo", "egg"],           icon: "\uD83C\uDF73" }, /* 🍳 */
+        { kw: ["jamon", "jamón", "ham"],                          icon: "\uD83C\uDF56" }, /* 🍖 */
+        { kw: ["queso", "manchego", "cheese"],                    icon: "\uD83E\uDDC0" }, /* 🧀 */
+        { kw: ["entrecot", "chuleton", "chuletón", "ribeye", "steak", "vaca", "secreto", "picaña"], icon: "\uD83E\uDD69" }, /* 🥩 */
+        { kw: ["costilla", "ribs", "bbq"],                        icon: "\uD83C\uDF56" }, /* 🍖 */
+        { kw: ["pollo", "chicken"],                               icon: "\uD83C\uDF57" }, /* 🍗 */
+        { kw: ["helado", "ice cream", "turron", "turrón"],        icon: "\uD83C\uDF68" }, /* 🍨 */
+        { kw: ["fruta", "fruit"],                                 icon: "\uD83C\uDF53" }, /* 🍓 */
+        { kw: ["vermut", "vermouth"],                             icon: "\uD83C\uDF78" }, /* 🍸 */
+        { kw: ["sangria", "sangría", "tinto de verano", "summer red"], icon: "\uD83C\uDF79" }, /* 🍹 */
+        { kw: ["mistela", "licor", "liqueur", "brandy"],          icon: "\uD83E\uDD43" }, /* 🥃 */
+        { kw: ["cava", "champagne", "brut"],                      icon: "\uD83C\uDF7E" }, /* 🍾 */
+        { kw: ["vino", "wine", "rioja", "ribera", "albari", "bobal"], icon: "\uD83C\uDF77" }, /* 🍷 */
+        { kw: ["cerveza", "beer", "cana", "caña", "ipa", "lager", "doble", "tostada"], icon: "\uD83C\uDF7A" }, /* 🍺 */
+        { kw: ["agua", "water"],                                  icon: "\uD83D\uDCA7" }, /* 💧 */
+        { kw: ["cola"],                                           icon: "\uD83E\uDD64" }, /* 🥤 */
+        { kw: ["limonada", "lemonade"],                           icon: "\uD83C\uDF4B" }, /* 🍋 */
+        { kw: ["horchata"],                                       icon: "\uD83E\uDD5B" }, /* 🥛 */
+        { kw: ["zumo", "juice", "naranja", "orange"],             icon: "\uD83C\uDF4A" }  /* 🍊 */
+      ];
+
+      var CATEGORY_ICONS = {
+        tapas:     "\uD83E\uDED5", /* 🫕  */
+        raciones:  "\uD83C\uDF7D", /* 🍽 */
+        carnes:    "\uD83E\uDD69", /* 🥩 */
+        postres:   "\uD83C\uDF70", /* 🍰 */
+        bodega:    "\uD83C\uDF78", /* 🍸 */
+        vinos:     "\uD83C\uDF77", /* 🍷 */
+        cervezas:  "\uD83C\uDF7A", /* 🍺 */
+        refrescos: "\uD83E\uDD64"  /* 🥤 */
+      };
+
+      function resolveDishIcon(dish) {
+        /* Nombre en ambos idiomas, en minúsculas, para blindar la búsqueda */
+        var haystack = (dish.es.name + " " + dish.en.name).toLowerCase();
+        var i, j;
+        for (i = 0; i < ICON_KEYWORDS.length; i++) {
+          for (j = 0; j < ICON_KEYWORDS[i].kw.length; j++) {
+            if (haystack.indexOf(ICON_KEYWORDS[i].kw[j]) !== -1) {
+              return ICON_KEYWORDS[i].icon;
+            }
+          }
+        }
+        return CATEGORY_ICONS[dish.category] || "\uD83C\uDF7D";
+      }
+
+      /* ----------------------------------------------------------
+         8. INTERNACIONALIZACIÓN
+         ---------------------------------------------------------- */
+      function applyI18n() {
+        var nodes = document.querySelectorAll("[data-i18n]");
+        var i;
+        for (i = 0; i < nodes.length; i++) {
+          var key = nodes[i].getAttribute("data-i18n");
+          if (I18N[state.lang][key] !== undefined) {
+            nodes[i].textContent = I18N[state.lang][key];
+          }
+        }
+
+        var switches = document.querySelectorAll("[data-lang-switch]");
+        for (i = 0; i < switches.length; i++) {
+          var esSpan = switches[i].querySelector("[data-lang-es]");
+          var enSpan = switches[i].querySelector("[data-lang-en]");
+          if (state.lang === "es") {
+            esSpan.className = "lang-on";
+            enSpan.className = "lang-off";
+          } else {
+            esSpan.className = "lang-off";
+            enSpan.className = "lang-on";
+          }
+        }
+
+        modalClose.setAttribute("aria-label", t("closeLabel"));
+        sidebarClose.setAttribute("aria-label", t("closeLabel"));
+        cartClose.setAttribute("aria-label", t("closeLabel"));
+        filterBtn.setAttribute("aria-label", t("filterBtnLabel"));
+        cartFab.setAttribute("aria-label", t("cartFabLabel"));
+        document.documentElement.setAttribute("lang", state.lang);
+      }
+
+      function toggleLang() {
+        state.lang = (state.lang === "es") ? "en" : "es";
+        applyI18n();
+        renderCategories();
+        renderFilters();
+        renderDishes();
+        renderCart();
+        if (state.modalDish) {
+          fillModal(state.modalDish);
+        }
+      }
+
+      /* ----------------------------------------------------------
+         9. ETIQUETAS DE ALÉRGENOS (tarjeta y modal)
+         ---------------------------------------------------------- */
+      function buildAllergenTags(dish) {
+        var wrap = document.createElement("div");
+        wrap.className = "allergen-tags";
+        wrap.setAttribute("aria-label", t("allergensLabel"));
+
+        var i;
+        for (i = 0; i < dish.allergens.length; i++) {
+          var key = dish.allergens[i];
+          var info = ALLERGENS[key];
+          if (!info) {
+            continue;
+          }
+
+          var tag = document.createElement("span");
+          tag.className = "allergen-tag tint-" + info.tint;
+
+          var icon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+          icon.setAttribute("aria-hidden", "true");
+          var use = document.createElementNS("http://www.w3.org/2000/svg", "use");
+          use.setAttribute("href", "#icon-allergen-dot");
+          icon.appendChild(use);
+
+          var label = document.createElement("span");
+          label.textContent = info[state.lang];
+
+          tag.appendChild(icon);
+          tag.appendChild(label);
+          wrap.appendChild(tag);
+        }
+        return wrap;
+      }
+
+      /* ----------------------------------------------------------
+         10. HISTORY API · gestos nativos de "atrás" en overlays
+         Al abrir un overlay se inserta un estado en el historial.
+         El gesto/botón "atrás" del móvil dispara popstate y solo
+         cierra el overlay, sin sacar al usuario de la web app.
+         El cierre manual (X) hace history.back() para limpiar el
+         estado fantasma y dejar el historial sincronizado.
+         ---------------------------------------------------------- */
+      function pushOverlayState(name) {
+        window.history.pushState({ tbOverlay: name }, "");
+      }
+
+      function isOverlayState(name) {
+        return !!(window.history.state && window.history.state.tbOverlay === name);
+      }
+
+      window.addEventListener("popstate", function () {
+        /* Cierra el overlay visible en el momento del gesto "atrás".
+           Solo cierre visual: el navegador ya ha retirado el estado. */
+        if (state.modalDish) {
+          closeModalUI();
+        } else if (cartPanel.classList.contains("is-open")) {
+          closeCartUI();
+        } else if (filterSidebar.classList.contains("is-open")) {
+          closeSidebarUI();
+        }
+      });
+
+      /* ----------------------------------------------------------
+         11. SIDEBAR DE FILTRADO (14 alérgenos)
+         ---------------------------------------------------------- */
+      function countActiveFilters() {
+        var n = 0;
+        var key;
+        for (key in state.activeFilters) {
+          if (state.activeFilters[key]) {
+            n += 1;
+          }
+        }
+        return n;
+      }
+
+      function updateFilterIndicators() {
+        var n = countActiveFilters();
+        if (n > 0) {
+          filterBadge.textContent = String(n);
+          filterBadge.hidden = false;
+          filterBtn.classList.add("is-filtering");
+        } else {
+          filterBadge.hidden = true;
+          filterBtn.classList.remove("is-filtering");
+        }
+        clearFiltersBtn.disabled = (n === 0);
+      }
+
+      function renderFilters() {
+        filterList.innerHTML = "";
+        var key;
+        for (key in ALLERGENS) {
+          (function (allergenKey) {
+            var info = ALLERGENS[allergenKey];
+            var checked = !!state.activeFilters[allergenKey];
+
+            var li = document.createElement("li");
+
+            var label = document.createElement("label");
+            label.className = "filter-option" + (checked ? " is-checked" : "");
+
+            var input = document.createElement("input");
+            input.type = "checkbox";
+            input.checked = checked;
+            input.setAttribute("aria-label", info[state.lang]);
+
+            var box = document.createElement("span");
+            box.className = "filter-option__box";
+            box.setAttribute("aria-hidden", "true");
+            var checkSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+            var checkUse = document.createElementNS("http://www.w3.org/2000/svg", "use");
+            checkUse.setAttribute("href", "#icon-check");
+            checkSvg.appendChild(checkUse);
+            box.appendChild(checkSvg);
+
+            var dot = document.createElement("span");
+            dot.className = "filter-option__dot dot-" + info.tint;
+            dot.setAttribute("aria-hidden", "true");
+
+            var text = document.createElement("span");
+            text.className = "filter-option__label";
+            text.textContent = info[state.lang];
+
+            input.addEventListener("change", function () {
+              state.activeFilters[allergenKey] = input.checked;
+              label.classList.toggle("is-checked", input.checked);
+              updateFilterIndicators();
+              renderDishes();
+            });
+
+            label.appendChild(input);
+            label.appendChild(box);
+            label.appendChild(dot);
+            label.appendChild(text);
+            li.appendChild(label);
+            filterList.appendChild(li);
+          })(key);
+        }
+        updateFilterIndicators();
+      }
+
+      function dishPassesFilters(dish) {
+        var i;
+        for (i = 0; i < dish.allergens.length; i++) {
+          if (state.activeFilters[dish.allergens[i]]) {
+            return false;
+          }
+        }
+        return true;
+      }
+
+      function openSidebar() {
+        filterSidebar.classList.add("is-open");
+        sidebarOverlay.classList.add("is-open");
+        filterBtn.setAttribute("aria-expanded", "true");
+        sidebarClose.focus();
+        pushOverlayState("sidebar");
+      }
+
+      /* Cierre visual puro (sin tocar el historial) */
+      function closeSidebarUI() {
+        filterSidebar.classList.remove("is-open");
+        sidebarOverlay.classList.remove("is-open");
+        filterBtn.setAttribute("aria-expanded", "false");
+        filterBtn.focus();
+      }
+
+      /* Cierre manual (X, overlay, Escape): sincroniza el historial */
+      function closeSidebar() {
+        if (isOverlayState("sidebar")) {
+          window.history.back(); /* popstate hará el cierre visual */
+        } else {
+          closeSidebarUI();
+        }
+      }
+
+      function clearFilters() {
+        var key;
+        for (key in state.activeFilters) {
+          state.activeFilters[key] = false;
+        }
+        renderFilters();
+        renderDishes();
+      }
+
+      filterBtn.addEventListener("click", openSidebar);
+      sidebarClose.addEventListener("click", closeSidebar);
+      sidebarOverlay.addEventListener("click", closeSidebar);
+      clearFiltersBtn.addEventListener("click", clearFilters);
+
+      /* ----------------------------------------------------------
+         12. RENDER DE CATEGORÍAS
+         ---------------------------------------------------------- */
+      function renderCategories() {
+        categoriesNav.innerHTML = "";
+        var i;
+        for (i = 0; i < CATEGORIES.length; i++) {
+          (function (cat) {
+            var chip = document.createElement("button");
+            chip.type = "button";
+            chip.className = "category-chip" + (cat.id === state.activeCategory ? " is-active" : "");
+            chip.textContent = cat[state.lang];
+            chip.setAttribute("aria-pressed", cat.id === state.activeCategory ? "true" : "false");
+            chip.addEventListener("click", function () {
+              if (state.activeCategory !== cat.id) {
+                state.activeCategory = cat.id;
+                renderCategories();
+                renderDishes();
+              }
+            });
+            categoriesNav.appendChild(chip);
+          })(CATEGORIES[i]);
+        }
+      }
+
+      /* ----------------------------------------------------------
+         13. RENDER DE PLATOS (con filtrado por alérgenos)
+         ---------------------------------------------------------- */
+      function renderDishes() {
+        dishList.innerHTML = "";
+
+        var inCategory = 0;
+        var visible = [];
+        var i;
+        for (i = 0; i < DISHES.length; i++) {
+          if (DISHES[i].category === state.activeCategory) {
+            /* Platos desactivados: invisibles para el cliente,
+               atenuados en modo admin para poder reactivarlos */
+            if (DISHES[i].visible === false && !ADMIN.on) {
+              continue;
+            }
+            inCategory += 1;
+            if (dishPassesFilters(DISHES[i])) {
+              visible.push(DISHES[i]);
+            }
+          }
+        }
+
+        if (visible.length === 0) {
+          var empty = document.createElement("li");
+          empty.className = "empty-state";
+          var icon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+          var use = document.createElementNS("http://www.w3.org/2000/svg", "use");
+          use.setAttribute("href", inCategory > 0 ? "#icon-funnel" : "#icon-plate");
+          icon.appendChild(use);
+          icon.setAttribute("aria-hidden", "true");
+          empty.appendChild(icon);
+          var msgKey = inCategory > 0 ? "noResults" : "emptyCategory";
+          var lines = t(msgKey).split("\n");
+          var j;
+          for (j = 0; j < lines.length; j++) {
+            var p = document.createElement("p");
+            p.textContent = lines[j];
+            empty.appendChild(p);
+          }
+          dishList.appendChild(empty);
+          return;
+        }
+
+        for (i = 0; i < visible.length; i++) {
+          dishList.appendChild(buildCard(visible[i], i));
+        }
+      }
+
+      function buildCard(dish, index) {
+        var li = document.createElement("li");
+        li.className = "dish-card";
+        li.style.animationDelay = (index * 50) + "ms";
+        li.setAttribute("role", "button");
+        li.setAttribute("tabindex", "0");
+        li.setAttribute("data-dish-id", dish.id);
+
+        /* Modo admin: plato oculto atenuado + lápiz de edición.
+           Estos elementos NO existen para el cliente. */
+        if (ADMIN.on) {
+          if (dish.visible === false) {
+            li.classList.add("is-hidden-dish");
+          }
+          var editBtn = document.createElement("button");
+          editBtn.type = "button";
+          editBtn.className = "admin-edit-btn";
+          editBtn.setAttribute("aria-label", "Editar plato");
+          editBtn.innerHTML = "&#9998;";
+          editBtn.addEventListener("click", function (ev) {
+            ev.stopPropagation();
+            openAdminEdit(dish);
+          });
+          li.appendChild(editBtn);
+        }
+
+        var photo = document.createElement("div");
+        photo.className = "dish-placeholder";
+        photo.setAttribute("aria-hidden", "true");
+        var emoji = document.createElement("span");
+        emoji.className = "dish-emoji";
+        emoji.textContent = resolveDishIcon(dish);
+        photo.appendChild(emoji);
+
+        var body = document.createElement("div");
+        body.className = "dish-card__body";
+
+        var title = document.createElement("h3");
+        title.className = "dish-card__title";
+        if (dish.recommended) {
+          var star = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+          star.setAttribute("class", "star");
+          star.setAttribute("aria-label", t("recommended"));
+          star.setAttribute("role", "img");
+          var starUse = document.createElementNS("http://www.w3.org/2000/svg", "use");
+          starUse.setAttribute("href", "#icon-star");
+          star.appendChild(starUse);
+          title.appendChild(star);
+        }
+        var titleText = document.createElement("span");
+        titleText.textContent = dish[state.lang].name;
+        title.appendChild(titleText);
+
+        var desc = document.createElement("p");
+        desc.className = "dish-card__desc";
+        desc.textContent = dish[state.lang].desc;
+
+        body.appendChild(title);
+        body.appendChild(desc);
+
+        if (dish.allergens.length > 0) {
+          body.appendChild(buildAllergenTags(dish));
+        }
+
+        var side = document.createElement("div");
+        side.className = "dish-card__side";
+
+        var price = document.createElement("span");
+        price.className = "dish-card__price";
+        price.textContent = formatPrice(dish.price);
+
+        side.appendChild(price);
+
+        li.addEventListener("click", function () {
+          openModal(dish);
+        });
+        li.addEventListener("keydown", function (ev) {
+          if (ev.key === "Enter" || ev.key === " ") {
+            ev.preventDefault();
+            openModal(dish);
+          }
+        });
+
+        li.appendChild(photo);
+        li.appendChild(body);
+        li.appendChild(side);
+        return li;
+      }
+
+      /* ----------------------------------------------------------
+         14. MOTOR DEL CARRITO
+         ---------------------------------------------------------- */
+      function cartItemCount() {
+        var total = 0;
+        var id;
+        for (id in cart) {
+          total += cart[id].qty;
+        }
+        return total;
+      }
+
+      function cartTotalAmount() {
+        var total = 0;
+        var id;
+        for (id in cart) {
+          var dish = findDish(id);
+          if (dish) {
+            total += dish.price * cart[id].qty;
+          }
+        }
+        return total;
+      }
+
+      function updateCartBadge() {
+        var count = cartItemCount();
+        if (count > 0) {
+          cartBadge.textContent = String(count);
+          cartBadge.classList.add("is-active");
+        } else {
+          cartBadge.classList.remove("is-active");
+        }
+      }
+
+      /* Añadir al carrito: suma si existe, crea si no */
+      function addToCart(dishId, qty) {
+        var quantity = parseInt(qty, 10);
+        if (isNaN(quantity) || quantity < 1) {
+          quantity = 1;
+        }
+        if (cart[dishId]) {
+          cart[dishId].qty += quantity;
+        } else {
+          cart[dishId] = { qty: quantity };
+        }
+        updateCartBadge();
+        renderCart();
+      }
+
+      function changeCartQty(dishId, delta) {
+        if (!cart[dishId]) {
+          return;
+        }
+        cart[dishId].qty += delta;
+        if (cart[dishId].qty <= 0) {
+          delete cart[dishId];
+        }
+        updateCartBadge();
+        renderCart();
+      }
+
+      function removeFromCart(dishId) {
+        if (cart[dishId]) {
+          delete cart[dishId];
+          updateCartBadge();
+          renderCart();
+        }
+      }
+
+      /* ----------------------------------------------------------
+         15. PANEL "TU PEDIDO"
+         ---------------------------------------------------------- */
+      function renderCart() {
+        cartItemsList.innerHTML = "";
+
+        var ids = [];
+        var id;
+        for (id in cart) {
+          ids.push(id);
+        }
+
+        var isEmpty = (ids.length === 0);
+        cartEmptyMsg.style.display = isEmpty ? "block" : "none";
+        cartConfirmBtn.disabled = isEmpty;
+
+        var i;
+        for (i = 0; i < ids.length; i++) {
+          (function (dishId) {
+            var dish = findDish(dishId);
+            if (!dish) {
+              return;
+            }
+            var entry = cart[dishId];
+
+            var li = document.createElement("li");
+            li.className = "cart-item";
+
+            var info = document.createElement("div");
+            info.className = "cart-item__info";
+
+            var name = document.createElement("span");
+            name.className = "cart-item__name";
+            name.textContent = dish[state.lang].name;
+
+            var lineTotal = document.createElement("span");
+            lineTotal.className = "cart-item__line-total";
+            lineTotal.textContent = formatPrice(dish.price * entry.qty);
+
+            info.appendChild(name);
+            info.appendChild(lineTotal);
+
+            /* Selector mecánico [-] [n] [+] */
+            var qtyWrap = document.createElement("div");
+            qtyWrap.className = "cart-item__qty";
+
+            var minus = document.createElement("button");
+            minus.type = "button";
+            minus.className = "qty-btn";
+            minus.textContent = "\u2212";
+            minus.setAttribute("aria-label", "\u2212");
+            minus.addEventListener("click", function () {
+              changeCartQty(dishId, -1);
+            });
+
+            var qtyText = document.createElement("span");
+            qtyText.className = "qty-value";
+            qtyText.textContent = String(entry.qty);
+
+            var plus = document.createElement("button");
+            plus.type = "button";
+            plus.className = "qty-btn";
+            plus.textContent = "+";
+            plus.setAttribute("aria-label", "+");
+            plus.addEventListener("click", function () {
+              changeCartQty(dishId, 1);
+            });
+
+            qtyWrap.appendChild(minus);
+            qtyWrap.appendChild(qtyText);
+            qtyWrap.appendChild(plus);
+
+            /* Botón de eliminar (papelera) */
+            var remove = document.createElement("button");
+            remove.type = "button";
+            remove.className = "cart-item__remove";
+            remove.setAttribute("aria-label", t("removeItem"));
+            var trash = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+            trash.setAttribute("aria-hidden", "true");
+            var trashUse = document.createElementNS("http://www.w3.org/2000/svg", "use");
+            trashUse.setAttribute("href", "#icon-trash");
+            trash.appendChild(trashUse);
+            remove.appendChild(trash);
+            remove.addEventListener("click", function () {
+              removeFromCart(dishId);
+            });
+
+            li.appendChild(info);
+            li.appendChild(qtyWrap);
+            li.appendChild(remove);
+            cartItemsList.appendChild(li);
+          })(ids[i]);
+        }
+
+        /* Total recalculado en tiempo real */
+        cartTotalValue.textContent = formatPrice(cartTotalAmount());
+      }
+
+      function openCart() {
+        renderCart();
+        cartPanel.classList.add("is-open");
+        cartOverlay.classList.add("is-open");
+        cartFab.setAttribute("aria-expanded", "true");
+        document.body.classList.add("modal-open");
+        cartClose.focus();
+        pushOverlayState("cart");
+      }
+
+      /* Cierre visual puro (sin tocar el historial) */
+      function closeCartUI() {
+        cartPanel.classList.remove("is-open");
+        cartOverlay.classList.remove("is-open");
+        cartFab.setAttribute("aria-expanded", "false");
+        document.body.classList.remove("modal-open");
+        cartFab.focus();
+      }
+
+      /* Cierre manual (X, overlay, Escape): sincroniza el historial */
+      function closeCart() {
+        if (isOverlayState("cart")) {
+          window.history.back(); /* popstate hará el cierre visual */
+        } else {
+          closeCartUI();
+        }
+      }
+
+      cartFab.addEventListener("click", openCart);
+      cartClose.addEventListener("click", closeCart);
+      cartOverlay.addEventListener("click", closeCart);
+
+      /* --- "Solo calcular": cierra el panel sin enviar nada.
+             El total queda calculado y el badge del FAB lo conserva. --- */
+      cartCalcBtn.addEventListener("click", function () {
+        closeCart();
+      });
+
+      /* --- Confirmar pedido → WhatsApp (sin formulario de delivery) --- */
+      cartForm.addEventListener("submit", function (ev) {
+        ev.preventDefault();
+
+        if (cartItemCount() === 0) {
+          return;
+        }
+
+        /* Serialización del pedido */
+        var lines = [];
+        lines.push(t("waHeader"));
+        lines.push("");
+
+        var id;
+        for (id in cart) {
+          var dish = findDish(id);
+          if (dish) {
+            lines.push(
+              cart[id].qty + "x " + dish[state.lang].name +
+              " — " + formatPrice(dish.price * cart[id].qty)
+            );
+          }
+        }
+
+        lines.push("");
+        lines.push(t("waTotal") + ": " + formatPrice(cartTotalAmount()));
+
+        /* Mesa o indicación: opcional, solo se incluye si existe */
+        if (fieldTable.value.trim() !== "") {
+          lines.push("");
+          lines.push(t("waTable") + ": " + fieldTable.value.trim());
+        }
+
+        var message = lines.join("\n");
+        var url = "https://wa.me/" + RESTAURANT_WHATSAPP + "?text=" + encodeURIComponent(message);
+        window.open(url, "_blank", "noopener");
+      });
+
+      /* ----------------------------------------------------------
+         16. MODAL DE DETALLE
+         ---------------------------------------------------------- */
+      function setModalQty(value) {
+        state.qty = value;
+        qtyValue.value = String(value);
+        qtyMinus.disabled = state.qty <= 1;
+        /* Precio parcial en tiempo real: precio base × cantidad */
+        if (state.modalDish) {
+          modalPrice.textContent = formatPrice(state.modalDish.price * state.qty);
+        }
+      }
+
+      function fillModal(dish) {
+        modalTitle.textContent = dish[state.lang].name;
+        modalDesc.textContent = dish[state.lang].longDesc || dish[state.lang].desc;
+        modalPrice.textContent = formatPrice(dish.price * state.qty);
+        modalBadge.hidden = !dish.recommended;
+        modalBadge.querySelector("[data-i18n]").textContent = t("recommended");
+        document.getElementById("modalEmoji").textContent = resolveDishIcon(dish);
+
+        modalAllergens.innerHTML = "";
+        if (dish.allergens.length > 0) {
+          var tags = buildAllergenTags(dish);
+          while (tags.firstChild) {
+            modalAllergens.appendChild(tags.firstChild);
+          }
+          modalAllergens.style.display = "flex";
+        } else {
+          modalAllergens.style.display = "none";
+        }
+
+        setModalQty(state.qty);
+        addCartLabel.textContent = t("addToCart");
+        addCartBtn.classList.remove("is-added");
+      }
+
+      function openModal(dish) {
+        state.modalDish = dish;
+        setModalQty(1);
+        fillModal(dish);
+        document.body.classList.add("modal-open");
+        dishModal.classList.add("is-visible");
+        window.requestAnimationFrame(function () {
+          window.requestAnimationFrame(function () {
+            dishModal.classList.add("is-shown");
+          });
+        });
+        modalClose.focus();
+        /* Estado en el historial: el gesto "atrás" cerrará el modal */
+        pushOverlayState("modal");
+      }
+
+      /* Cierre visual puro (sin tocar el historial) */
+      function closeModalUI() {
+        dishModal.classList.remove("is-shown");
+        document.body.classList.remove("modal-open");
+        state.modalDish = null;
+        window.setTimeout(function () {
+          dishModal.classList.remove("is-visible");
+        }, 320);
+      }
+
+      /* Cierre manual (X, Escape, auto-cierre): limpia el estado fantasma */
+      function closeModal() {
+        if (isOverlayState("modal")) {
+          window.history.back(); /* popstate hará el cierre visual */
+        } else {
+          closeModalUI();
+        }
+      }
+
+      modalClose.addEventListener("click", closeModal);
+
+      qtyMinus.addEventListener("click", function () {
+        var current = parseInt(qtyValue.value, 10) || 1;
+        if (current > 1) {
+          setModalQty(current - 1);
+        }
+      });
+
+      qtyPlus.addEventListener("click", function () {
+        var current = parseInt(qtyValue.value, 10) || 1;
+        if (current < 20) {
+          setModalQty(current + 1);
+        }
+      });
+
+      /* Añadir al carrito desde el modal */
+      addCartBtn.addEventListener("click", function () {
+        if (!state.modalDish) {
+          return;
+        }
+
+        var dish = state.modalDish;
+        var quantity = parseInt(qtyValue.value, 10) || 1;
+        var unitPrice = parseFloat(dish.price);
+
+        /* Captura de ID, nombre, precio (float) y cantidad (int) */
+        addToCart(dish.id, quantity);
+        void unitPrice; /* el precio se resuelve desde el catálogo al renderizar */
+
+        addCartBtn.classList.add("is-added");
+        addCartLabel.textContent = t("added");
+
+        window.setTimeout(function () {
+          if (state.modalDish) {
+            closeModal();
+          }
+        }, 600);
+      });
+
+      /* Tecla Escape: cierra modal, carrito o sidebar (en ese orden) */
+      document.addEventListener("keydown", function (ev) {
+        if (ev.key === "Escape") {
+          if (state.modalDish) {
+            closeModal();
+          } else if (cartPanel.classList.contains("is-open")) {
+            closeCart();
+          } else if (filterSidebar.classList.contains("is-open")) {
+            closeSidebar();
+          }
+        }
+      });
+
+      /* ----------------------------------------------------------
+         17. TRANSICIÓN SPLASH → CARTA
+         ---------------------------------------------------------- */
+      function showMenu() {
+        splash.classList.add("is-hidden");
+        splash.setAttribute("aria-hidden", "true");
+        document.body.classList.remove("splash-active");
+        document.body.classList.add("menu-active");
+
+        menuScreen.classList.add("is-visible");
+        menuScreen.removeAttribute("aria-hidden");
+        window.requestAnimationFrame(function () {
+          window.requestAnimationFrame(function () {
+            menuScreen.classList.add("is-shown");
+          });
+        });
+
+        floatingPill.classList.add("is-visible");
+        floatingPill.removeAttribute("aria-hidden");
+        window.requestAnimationFrame(function () {
+          window.requestAnimationFrame(function () {
+            floatingPill.classList.add("is-shown");
+          });
+        });
+
+        /* El FAB del carrito solo existe visualmente en la carta */
+        cartFab.classList.add("is-shown");
+
+        window.scrollTo(0, 0);
+      }
+
+      openMenuBtn.addEventListener("click", showMenu);
+
+      /* ----------------------------------------------------------
+         19. MODO ADMINISTRADOR OCULTO
+         Acceso: 3 toques rápidos sobre el logo del header.
+         Nada de esto existe en el DOM hasta validar la contraseña.
+         ---------------------------------------------------------- */
+      var ADMIN = { on: false };
+      var OVERRIDES_KEY = "tbOverrides";
+
+      /* --- Overrides: aplicar cambios guardados sobre la carta --- */
+      function applyOverrides(map) {
+        if (!map) { return; }
+        var id;
+        for (id in map) {
+          var d = findDish(id);
+          var o = map[id];
+          if (!d || !o) { continue; }
+          if (typeof o.esName === "string") { d.es.name = o.esName; }
+          if (typeof o.enName === "string") { d.en.name = o.enName; }
+          if (typeof o.esDesc === "string") { d.es.desc = o.esDesc; }
+          if (typeof o.enDesc === "string") { d.en.desc = o.enDesc; }
+          if (typeof o.price === "number" && isFinite(o.price)) { d.price = o.price; }
+          if (typeof o.visible === "boolean") { d.visible = o.visible; }
+        }
+      }
+
+      function readLocalOverrides() {
+        try {
+          var raw = localStorage.getItem(OVERRIDES_KEY);
+          return raw ? JSON.parse(raw) : {};
+        } catch (e) { return {}; }
+      }
+
+      function writeLocalOverride(dishId, ov) {
+        try {
+          var all = readLocalOverrides();
+          all[dishId] = ov;
+          localStorage.setItem(OVERRIDES_KEY, JSON.stringify(all));
+        } catch (e) { /* almacenamiento no disponible */ }
+      }
+
+      /* --- Firebase: desactivado (almacenamiento local solamente) --- */
+      function initFirebase() {
+        /* Firebase removido: cambios guardados solo en este móvil */
+      }
+
+      /* --- Toast de confirmación --- */
+      var toastTimer = null;
+      function adminToast(text) {
+        var el = document.querySelector(".admin-toast");
+        if (!el) {
+          el = document.createElement("div");
+          el.className = "admin-toast";
+          document.body.appendChild(el);
+        }
+        el.textContent = text;
+        clearTimeout(toastTimer);
+        window.requestAnimationFrame(function () { el.classList.add("is-on"); });
+        toastTimer = setTimeout(function () { el.classList.remove("is-on"); }, 2400);
+      }
+
+      /* --- Acceso oculto: 3 toques en el logo del header --- */
+      var tapCount = 0;
+      var tapTimer = null;
+      var headerLogo = document.querySelector(".menu-header__logo");
+      if (headerLogo) {
+        headerLogo.addEventListener("click", function () {
+          tapCount += 1;
+          clearTimeout(tapTimer);
+          tapTimer = setTimeout(function () { tapCount = 0; }, 1200);
+          if (tapCount >= 3) {
+            tapCount = 0;
+            if (!ADMIN.on) { openAdminLogin(); }
+          }
+        });
+      }
+
+      /* --- Login (generado dinámicamente, nunca presente antes) --- */
+      var loginEls = null;
+      function openAdminLogin() {
+        if (loginEls) { return; }
+        var overlay = document.createElement("div");
+        overlay.className = "admin-overlay";
+
+        var box = document.createElement("div");
+        box.className = "admin-modal";
+        box.setAttribute("role", "dialog");
+        box.setAttribute("aria-modal", "true");
+        box.innerHTML =
+          '<h2 class="admin-modal__title">Acceso restringido</h2>' +
+          '<div class="cart-form__field">' +
+            '<label class="cart-form__label" for="adminPass">Contrase\u00f1a</label>' +
+            '<div class="admin-pass-wrap">' +
+              '<input class="cart-form__input" id="adminPass" type="password" autocomplete="off" style="width:100%;">' +
+              '<button type="button" class="admin-eye-btn" aria-label="Mostrar u ocultar">&#128065;</button>' +
+            '</div>' +
+          '</div>' +
+          '<p class="admin-error"></p>' +
+          '<div class="admin-row">' +
+            '<button type="button" class="cart-confirm-btn" id="adminCancel" style="background:#8a857c;box-shadow:none;">Cancelar</button>' +
+            '<button type="button" class="cart-confirm-btn" id="adminEnter">Entrar</button>' +
+          '</div>';
+
+        document.body.appendChild(overlay);
+        document.body.appendChild(box);
+        loginEls = { overlay: overlay, box: box };
+
+        var input = box.querySelector("#adminPass");
+        var error = box.querySelector(".admin-error");
+
+        box.querySelector(".admin-eye-btn").addEventListener("click", function () {
+          input.type = input.type === "password" ? "text" : "password";
+          input.focus();
+        });
+
+        function tryEnter() {
+          if (input.value === ADMIN_PASSWORD) {
+            closeAdminLogin();
+            enterAdminMode();
+          } else {
+            error.textContent = "Contrase\u00f1a incorrecta";
+            input.value = "";
+            input.focus();
+          }
+        }
+
+        box.querySelector("#adminEnter").addEventListener("click", tryEnter);
+        input.addEventListener("keydown", function (ev) {
+          if (ev.key === "Enter") { tryEnter(); }
+        });
+        box.querySelector("#adminCancel").addEventListener("click", closeAdminLogin);
+        overlay.addEventListener("click", closeAdminLogin);
+        setTimeout(function () { input.focus(); }, 60);
+      }
+
+      function closeAdminLogin() {
+        if (!loginEls) { return; }
+        loginEls.overlay.remove();
+        loginEls.box.remove();
+        loginEls = null;
+      }
+
+      /* --- Entrar / salir del modo edición --- */
+      var adminBar = null;
+      function enterAdminMode() {
+        ADMIN.on = true;
+        adminBar = document.createElement("div");
+        adminBar.className = "admin-bar";
+        adminBar.innerHTML =
+          '<span class="admin-bar__label">Edici\u00f3n</span>' +
+          '<button type="button" id="adminDownload" aria-label="Descargar index actualizado">&#11015;</button>' +
+          '<button type="button" id="adminExit" aria-label="Salir del modo edici\u00f3n">&#10005;</button>';
+        document.body.appendChild(adminBar);
+        adminBar.querySelector("#adminExit").addEventListener("click", exitAdminMode);
+        adminBar.querySelector("#adminDownload").addEventListener("click", downloadUpdatedIndex);
+        renderDishes();
+        adminToast("Modo edici\u00f3n activado");
+      }
+
+      function exitAdminMode() {
+        ADMIN.on = false;
+        if (adminBar) { adminBar.remove(); adminBar = null; }
+        closeAdminEdit();
+        renderDishes();
+      }
+
+      /* --- Modal de edición de plato --- */
+      var editEls = null;
+      function openAdminEdit(dish) {
+        closeAdminEdit();
+        var overlay = document.createElement("div");
+        overlay.className = "admin-overlay";
+
+        var box = document.createElement("div");
+        box.className = "admin-modal";
+        box.setAttribute("role", "dialog");
+        box.setAttribute("aria-modal", "true");
+        box.innerHTML =
+          '<h2 class="admin-modal__title">Editar plato</h2>' +
+          '<div class="cart-form__field"><label class="cart-form__label">Nombre (ES)</label>' +
+            '<input class="cart-form__input" id="edNameEs" type="text" style="width:100%;"></div>' +
+          '<div class="cart-form__field"><label class="cart-form__label">Nombre (EN)</label>' +
+            '<input class="cart-form__input" id="edNameEn" type="text" style="width:100%;"></div>' +
+          '<div class="cart-form__field"><label class="cart-form__label">Descripci\u00f3n (ES)</label>' +
+            '<textarea class="cart-form__input" id="edDescEs" rows="2" style="width:100%;"></textarea></div>' +
+          '<div class="cart-form__field"><label class="cart-form__label">Descripci\u00f3n (EN)</label>' +
+            '<textarea class="cart-form__input" id="edDescEn" rows="2" style="width:100%;"></textarea></div>' +
+          '<div class="cart-form__field"><label class="cart-form__label">Precio (\u20ac)</label>' +
+            '<input class="cart-form__input" id="edPrice" type="number" step="0.05" min="0" inputmode="decimal" style="width:100%;"></div>' +
+          '<div class="cart-form__field"><label class="cart-form__label">Visible en la carta</label>' +
+            '<select class="cart-form__input" id="edVisible" style="width:100%;">' +
+              '<option value="SI">S\u00cd</option><option value="NO">NO</option>' +
+            '</select></div>' +
+          '<p class="admin-error"></p>' +
+          '<div class="admin-row">' +
+            '<button type="button" class="cart-confirm-btn" id="edCancel" style="background:#8a857c;box-shadow:none;">Cancelar</button>' +
+            '<button type="button" class="cart-confirm-btn" id="edSave">Guardar</button>' +
+          '</div>';
+
+        document.body.appendChild(overlay);
+        document.body.appendChild(box);
+        editEls = { overlay: overlay, box: box };
+
+        box.querySelector("#edNameEs").value = dish.es.name;
+        box.querySelector("#edNameEn").value = dish.en.name;
+        box.querySelector("#edDescEs").value = dish.es.desc;
+        box.querySelector("#edDescEn").value = dish.en.desc;
+        box.querySelector("#edPrice").value = dish.price;
+        box.querySelector("#edVisible").value = dish.visible === false ? "NO" : "SI";
+
+        overlay.addEventListener("click", closeAdminEdit);
+        box.querySelector("#edCancel").addEventListener("click", closeAdminEdit);
+        box.querySelector("#edSave").addEventListener("click", function () {
+          var error = box.querySelector(".admin-error");
+          var price = parseFloat(String(box.querySelector("#edPrice").value).replace(",", "."));
+          var nameEs = box.querySelector("#edNameEs").value.trim();
+          var nameEn = box.querySelector("#edNameEn").value.trim();
+          if (nameEs === "" || nameEn === "") {
+            error.textContent = "El nombre no puede quedar vac\u00edo";
+            return;
+          }
+          if (!isFinite(price) || price < 0) {
+            error.textContent = "Precio no v\u00e1lido";
+            return;
+          }
+
+          dish.es.name = nameEs;
+          dish.en.name = nameEn;
+          dish.es.desc = box.querySelector("#edDescEs").value.trim();
+          dish.en.desc = box.querySelector("#edDescEn").value.trim();
+          dish.price = price;
+          dish.visible = box.querySelector("#edVisible").value === "SI";
+
+          var ov = {
+            esName: dish.es.name, enName: dish.en.name,
+            esDesc: dish.es.desc, enDesc: dish.en.desc,
+            price: dish.price, visible: dish.visible
+          };
+
+          /* 1) Guardado inmediato en este móvil (localStorage) */
+          writeLocalOverride(dish.id, ov);
+          adminToast("Guardado en este móvil · descarga para publicar");
+
+          closeAdminEdit();
+          renderDishes();
+          renderCart();
+        });
+      }
+
+      function closeAdminEdit() {
+        if (!editEls) { return; }
+        editEls.overlay.remove();
+        editEls.box.remove();
+        editEls = null;
+      }
+
+      /* --- Descargar index.html con los cambios incorporados --- */
+      function downloadUpdatedIndex() {
+        var START = "/*__DISHES_START__*/";
+        var END = "/*__DISHES_END__*/";
+        fetch(window.location.href.split("#")[0], { cache: "no-store" })
+          .then(function (r) { return r.text(); })
+          .then(function (src) {
+            var a = src.indexOf(START);
+            var b = src.indexOf(END);
+            if (a === -1 || b === -1) { throw new Error("markers"); }
+            var block = START + "\n      var DISHES = " +
+                        JSON.stringify(DISHES, null, 2) + ";\n      " + END;
+            var out = src.slice(0, a) + block + src.slice(b + END.length);
+            var blob = new Blob([out], { type: "text/html" });
+            var link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = "index.html";
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            adminToast("index.html descargado \u00b7 s\u00fabelo a GitHub");
+          })
+          .catch(function () {
+            adminToast("La descarga funciona con la web publicada online");
+          });
+      }
+
+      /* Cargar cambios guardados: primero los de este móvil,
+         después los publicados en vivo (Firebase) */
+      applyOverrides(readLocalOverrides());
+      initFirebase();
+
+      /* ----------------------------------------------------------
+         18. EVENTOS DE IDIOMA E INICIALIZACIÓN
+         ---------------------------------------------------------- */
+      var langSwitches = document.querySelectorAll("[data-lang-switch]");
+      var k;
+      for (k = 0; k < langSwitches.length; k++) {
+        langSwitches[k].addEventListener("click", toggleLang);
+      }
+
+      applyI18n();
+      renderCategories();
+      renderFilters();
+      renderDishes();
+      renderCart();
+      updateCartBadge();
+    })();
+  </script>
+
+</body>
+</html>
