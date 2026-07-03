@@ -2171,6 +2171,116 @@
       transform: translateX(-50%) translateY(0);
     }
 
+    /* ==========================================================
+       BANNER MENÚ DEL DÍA
+       ========================================================== */
+    .mdday-banner {
+      position: relative;
+      overflow: hidden;
+      margin: 0 0 6px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #1a3a2a 0%, #1e4d35 60%, #245c3e 100%);
+      box-shadow: 0 8px 28px rgba(34, 90, 54, 0.32), 0 2px 8px rgba(34, 90, 54, 0.18);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .mdday-banner__inner {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      padding: 1rem 1rem 1rem 1.1rem;
+    }
+
+    .mdday-banner__left {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      min-width: 0;
+    }
+
+    .mdday-banner__tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-size: 0.62rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #7effc0;
+      margin-bottom: 0.1rem;
+    }
+
+    .mdday-banner__tag::before {
+      content: "";
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #7effc0;
+      animation: mdday-pulse 1.8s ease-in-out infinite;
+      flex-shrink: 0;
+    }
+
+    @keyframes mdday-pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.5; transform: scale(0.75); }
+    }
+
+    .mdday-banner__title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.25;
+      margin: 0;
+      letter-spacing: 0.01em;
+    }
+
+    .mdday-banner__sub {
+      font-size: 0.68rem;
+      color: rgba(255, 255, 255, 0.52);
+      margin: 0;
+      letter-spacing: 0.02em;
+    }
+
+    .mdday-banner__btn {
+      flex-shrink: 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      padding: 0.55rem 1rem;
+      border-radius: 99px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      color: #1a3a2a;
+      background: #7effc0;
+      box-shadow: 0 4px 14px rgba(126, 255, 192, 0.35);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      white-space: nowrap;
+    }
+
+    .mdday-banner__btn:active {
+      transform: scale(0.96);
+      box-shadow: 0 2px 8px rgba(126, 255, 192, 0.22);
+    }
+
+    .mdday-banner__glow {
+      position: absolute;
+      z-index: 1;
+      top: -40%;
+      right: -10%;
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(126, 255, 192, 0.14) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
   </style>
 </head>
 <body class="splash-active">
@@ -2374,6 +2484,22 @@
 
     <nav class="categories" id="categoriesNav" aria-label="Categorías de la carta"></nav>
 
+    <!-- BANNER MENÚ DEL DÍA (L-V 13:00-16:30, oculto fuera de ese horario) -->
+    <div class="mdday-banner" id="mddayBanner" style="display:none;" role="banner" aria-label="Menú del día disponible">
+      <div class="mdday-banner__inner">
+        <div class="mdday-banner__left">
+          <span class="mdday-banner__tag" data-i18n="mddayTag">Hoy</span>
+          <p class="mdday-banner__title" data-i18n="mddayTitle">¡Ya disponible nuestro Menú del Día!</p>
+          <p class="mdday-banner__sub" data-i18n="mddaySub">De lunes a viernes · 13:00 a 16:30</p>
+        </div>
+        <button class="mdday-banner__btn" type="button" id="mddayBtn" aria-label="Ver menú del día">
+          <span data-i18n="mddayBtn">Ver menú</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </button>
+      </div>
+      <div class="mdday-banner__glow" aria-hidden="true"></div>
+    </div>
+
     <ul class="dish-list" id="dishList"></ul>
 
   </section>
@@ -2566,6 +2692,10 @@
           cartFabLabel: "Tu pedido",
           cartEmpty: "Tu pedido está vacío. Añade platos desde la carta.",
           totalLabel: "Total",
+          mddayTag: "Hoy",
+          mddayTitle: "¡Ya disponible nuestro Menú del Día!",
+          mddaySub: "De lunes a viernes · 13:00 a 16:30",
+          mddayBtn: "Ver menú",
           fieldTable: "Mesa o indicación (opcional)",
           calcOnly: "Solo calcular",
           confirmOrder: "Confirmar y Enviar a Cocina",
@@ -2597,6 +2727,10 @@
           cartFabLabel: "Your Order",
           cartEmpty: "Your order is empty. Add dishes from the menu.",
           totalLabel: "Total",
+          mddayTag: "Today",
+          mddayTitle: "Our Today's Set Menu is now available!",
+          mddaySub: "Monday to Friday · 1:00 PM to 4:30 PM",
+          mddayBtn: "See menu",
           fieldTable: "Table or note (optional)",
           calcOnly: "Just calculate",
           confirmOrder: "Confirm & Send to Kitchen",
@@ -4336,10 +4470,53 @@
         downloadEls = null;
       }
 
+      /* ----------------------------------------------------------
+         20. BANNER MENÚ DEL DÍA
+         Visible L-V de 13:00 a 16:30 según el reloj del cliente.
+         TEST: cambia TEST_MODE a true para verlo siempre.
+         ---------------------------------------------------------- */
+      var MDDAY_TEST_MODE = false; /* Producción: banner activo solo L-V 13:00-16:30 */
+
+      function mddayIsActive() {
+        if (MDDAY_TEST_MODE) { return true; }
+        var now  = new Date();
+        var day  = now.getDay();          /* 0=Dom, 1=Lun … 5=Vie, 6=Sab */
+        var hour = now.getHours();
+        var min  = now.getMinutes();
+        var mins = hour * 60 + min;       /* minutos desde medianoche */
+        var isWeekday = day >= 1 && day <= 5;
+        var inRange   = mins >= 13 * 60 && mins < 16 * 60 + 30;
+        return isWeekday && inRange;
+      }
+
+      function mddayInit() {
+        var banner = document.getElementById("mddayBanner");
+        var btn    = document.getElementById("mddayBtn");
+        if (!banner || !btn) { return; }
+
+        if (mddayIsActive()) {
+          banner.style.display = "";
+        }
+
+        btn.addEventListener("click", function () {
+          /* Desplaza suavemente hasta el listado de platos */
+          var target = document.getElementById("dishList");
+          if (target) {
+            target.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
+        });
+
+        /* Re-evalúa cada minuto para ocultar al salir del horario */
+        setInterval(function () {
+          banner.style.display = mddayIsActive() ? "" : "none";
+        }, 60000);
+      }
+
       /* Cargar cambios guardados: primero los de este móvil,
          después los publicados en vivo (Firebase) */
       applyOverrides(readLocalOverrides());
       initFirebase();
+      mddayInit();
 
       /* ----------------------------------------------------------
          18. EVENTOS DE IDIOMA E INICIALIZACIÓN
