@@ -4475,17 +4475,20 @@
          Visible L-V de 13:00 a 16:30 según el reloj del cliente.
          TEST: cambia TEST_MODE a true para verlo siempre.
          ---------------------------------------------------------- */
-      var MDDAY_TEST_MODE = true; /* ← PRUEBA TEMPORAL: recuerda volver a false luego */
+      /* Horario del banner (configurable):
+         PRUEBA DE HOY → 15:15 a 15:25, solo L-V.
+         Para producción: cambiar a  13*60      y  16*60+30  */
+      var MDDAY_TEST_MODE = false;
+      var MDDAY_START = 15 * 60 + 15;  /* 15:15 */
+      var MDDAY_END   = 15 * 60 + 25;  /* 15:25 */
 
       function mddayIsActive() {
         if (MDDAY_TEST_MODE) { return true; }
         var now  = new Date();
         var day  = now.getDay();          /* 0=Dom, 1=Lun … 5=Vie, 6=Sab */
-        var hour = now.getHours();
-        var min  = now.getMinutes();
-        var mins = hour * 60 + min;       /* minutos desde medianoche */
-        var isWeekday = day >= 1 && day <= 5;
-        var inRange   = mins >= 13 * 60 && mins < 16 * 60 + 30;
+        var mins = now.getHours() * 60 + now.getMinutes();
+        var isWeekday = day >= 1 && day <= 5;          /* Sáb y Dom bloqueados */
+        var inRange   = mins >= MDDAY_START && mins < MDDAY_END;
         return isWeekday && inRange;
       }
 
@@ -4506,10 +4509,10 @@
           }
         });
 
-        /* Re-evalúa cada minuto para ocultar al salir del horario */
+        /* Re-evalúa cada 5 segundos: aparece y desaparece puntual */
         setInterval(function () {
           banner.style.display = mddayIsActive() ? "" : "none";
-        }, 60000);
+        }, 5000);
       }
 
       /* Cargar cambios guardados: primero los de este móvil,
