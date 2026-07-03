@@ -4475,7 +4475,7 @@
          Visible L-V de 13:00 a 16:30 según el reloj del cliente.
          TEST: cambia TEST_MODE a true para verlo siempre.
          ---------------------------------------------------------- */
-      var MDDAY_TEST_MODE = false; /* Producción: banner activo solo L-V 13:00-16:30 */
+      var MDDAY_TEST_MODE = true; /* ← PRUEBA TEMPORAL: recuerda volver a false luego */
 
       function mddayIsActive() {
         if (MDDAY_TEST_MODE) { return true; }
