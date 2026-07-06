@@ -2281,6 +2281,89 @@
       pointer-events: none;
     }
 
+    /* --- Desplegable del Menú del Día --- */
+    .mdday-banner { cursor: pointer; }
+
+    .mdday-chevron {
+      transition: transform 0.35s ease;
+    }
+
+    .mdday-banner.is-open .mdday-chevron {
+      transform: rotate(180deg);
+    }
+
+    .mdday-dropdown {
+      position: relative;
+      z-index: 2;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease;
+    }
+
+    .mdday-banner.is-open .mdday-dropdown {
+      max-height: 260px;
+    }
+
+    .mdday-dropdown__inner {
+      margin: 0 0.85rem 0.9rem;
+      padding: 0.85rem 0.9rem;
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+    }
+
+    .mdday-dish {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 0.7rem;
+    }
+
+    .mdday-dish__info {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      min-width: 0;
+    }
+
+    .mdday-dish__name {
+      font-size: 0.86rem;
+      font-weight: 700;
+      color: #fff;
+      margin: 0;
+    }
+
+    .mdday-dish__desc {
+      font-size: 0.74rem;
+      line-height: 1.4;
+      color: rgba(255, 255, 255, 0.62);
+      margin: 0;
+    }
+
+    .mdday-dish__allergen {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      align-self: flex-start;
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #9fd8c4;
+      background: rgba(126, 255, 192, 0.12);
+      border: 1px solid rgba(126, 255, 192, 0.25);
+      padding: 2px 8px;
+      border-radius: 99px;
+      margin-top: 0.1rem;
+    }
+
+    .mdday-dish__price {
+      flex-shrink: 0;
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: #7effc0;
+    }
+
   </style>
 </head>
 <body class="splash-active">
@@ -2492,10 +2575,22 @@
           <p class="mdday-banner__title" data-i18n="mddayTitle">¡Ya disponible nuestro Menú del Día!</p>
           <p class="mdday-banner__sub" data-i18n="mddaySub">De lunes a viernes · 13:00 a 16:30</p>
         </div>
-        <button class="mdday-banner__btn" type="button" id="mddayBtn" aria-label="Ver menú del día">
+        <button class="mdday-banner__btn" type="button" id="mddayBtn" aria-label="Ver menú del día" aria-expanded="false">
           <span data-i18n="mddayBtn">Ver menú</span>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          <svg class="mdday-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>
         </button>
+      </div>
+      <div class="mdday-dropdown" id="mddayDropdown">
+        <div class="mdday-dropdown__inner">
+          <div class="mdday-dish">
+            <div class="mdday-dish__info">
+              <p class="mdday-dish__name">Boquerones en Vinagre</p>
+              <p class="mdday-dish__desc">Boquerón fresco, vinagre suave, ajo y perejil.</p>
+              <span class="mdday-dish__allergen">&#9432; Pescado</span>
+            </div>
+            <span class="mdday-dish__price">6,50 €</span>
+          </div>
+        </div>
       </div>
       <div class="mdday-banner__glow" aria-hidden="true"></div>
     </div>
@@ -4476,11 +4571,11 @@
          TEST: cambia TEST_MODE a true para verlo siempre.
          ---------------------------------------------------------- */
       /* Horario del banner (configurable):
-         PRUEBA DE HOY → 15:15 a 15:25, solo L-V.
+         PRUEBA DE HOY → 22:40 a 23:00, solo L-V.
          Para producción: cambiar a  13*60      y  16*60+30  */
       var MDDAY_TEST_MODE = false;
-      var MDDAY_START = 15 * 60 + 15;  /* 15:15 */
-      var MDDAY_END   = 15 * 60 + 25;  /* 15:25 */
+      var MDDAY_START = 22 * 60 + 40;  /* 22:40 */
+      var MDDAY_END   = 23 * 60;       /* 23:00 */
 
       function mddayIsActive() {
         if (MDDAY_TEST_MODE) { return true; }
@@ -4501,17 +4596,21 @@
           banner.style.display = "";
         }
 
-        btn.addEventListener("click", function () {
-          /* Desplaza suavemente hasta el listado de platos */
-          var target = document.getElementById("dishList");
-          if (target) {
-            target.scrollIntoView({ behavior: "smooth", block: "start" });
-          }
-        });
+        /* Toggle del desplegable: click/touch en el banner o en la flecha */
+        function toggleDropdown() {
+          var open = banner.classList.toggle("is-open");
+          btn.setAttribute("aria-expanded", open ? "true" : "false");
+        }
+        banner.addEventListener("click", toggleDropdown);
 
         /* Re-evalúa cada 5 segundos: aparece y desaparece puntual */
         setInterval(function () {
-          banner.style.display = mddayIsActive() ? "" : "none";
+          var active = mddayIsActive();
+          banner.style.display = active ? "" : "none";
+          if (!active && banner.classList.contains("is-open")) {
+            banner.classList.remove("is-open");
+            btn.setAttribute("aria-expanded", "false");
+          }
         }, 5000);
       }
 
