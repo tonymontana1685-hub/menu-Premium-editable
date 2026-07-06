@@ -2,6 +2,9 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="theme-color" content="#121212">
   <meta name="description" content="Taberna &amp; Brasa — Carnes a la brasa y cocina tradicional valenciana. Reserva tu mesa.">
@@ -2747,6 +2750,24 @@
   <!-- ============================================================
        LÓGICA DE LA APLICACIÓN (Vanilla JS)
        ============================================================ -->
+  <!-- ANTI-CACHÉ: si el navegador sirvió la página desde caché,
+       fuerza UNA recarga fresca desde GitHub (sin bucles) -->
+  <script>
+    (function () {
+      try {
+        var nav = performance.getEntriesByType("navigation")[0];
+        var fromCache = nav && nav.transferSize === 0 && nav.decodedBodySize > 0;
+        var yaRefrescado = sessionStorage.getItem("tbFresh") === "1";
+        if (fromCache && !yaRefrescado) {
+          sessionStorage.setItem("tbFresh", "1");
+          window.location.replace(
+            window.location.pathname + "?nc=" + Date.now() + window.location.hash
+          );
+        }
+      } catch (e) { /* si el navegador no lo soporta, no pasa nada */ }
+    })();
+  </script>
+
   <script>
     (function () {
       "use strict";
