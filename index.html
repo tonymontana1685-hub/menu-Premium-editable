@@ -2750,21 +2750,48 @@
   <!-- ============================================================
        LÓGICA DE LA APLICACIÓN (Vanilla JS)
        ============================================================ -->
-  <!-- ANTI-CACHÉ: si el navegador sirvió la página desde caché,
-       fuerza UNA recarga fresca desde GitHub (sin bucles) -->
+  <!-- ANTI-CACHÉ ROBUSTO: compara la versión del servidor con la local.
+       Si GitHub Pages tiene una versión nueva, recarga automáticamente. -->
   <script>
     (function () {
-      try {
-        var nav = performance.getEntriesByType("navigation")[0];
-        var fromCache = nav && nav.transferSize === 0 && nav.decodedBodySize > 0;
-        var yaRefrescado = sessionStorage.getItem("tbFresh") === "1";
-        if (fromCache && !yaRefrescado) {
-          sessionStorage.setItem("tbFresh", "1");
+      'use strict';
+      var ETAG_KEY    = 'tb_etag_v1';
+      var SESSION_KEY = 'tb_fresh_v1';
+
+      /* Solo comprueba una vez por sesión para no saturar */
+      if (sessionStorage.getItem(SESSION_KEY)) { return; }
+
+      /* Petición HEAD sin caché al propio archivo: obtiene la versión real del CDN */
+      fetch(window.location.pathname + '?_hc=' + Date.now(), {
+        method: 'HEAD',
+        cache:  'no-store'
+      }).then(function (r) {
+        var serverTag = r.headers.get('etag') ||
+                        r.headers.get('last-modified') || '';
+        var localTag  = localStorage.getItem(ETAG_KEY) || '';
+
+        if (!localTag) {
+          /* Primera visita: guardar referencia y seguir */
+          localStorage.setItem(ETAG_KEY, serverTag);
+          sessionStorage.setItem(SESSION_KEY, '1');
+
+        } else if (serverTag && serverTag !== localTag) {
+          /* Nueva versión en GitHub → recarga fresca */
+          localStorage.setItem(ETAG_KEY, serverTag);
+          sessionStorage.setItem(SESSION_KEY, '1');
           window.location.replace(
-            window.location.pathname + "?nc=" + Date.now() + window.location.hash
+            window.location.pathname + '?_v=' + Date.now() + window.location.hash
           );
+
+        } else {
+          /* Ya tiene la última versión */
+          sessionStorage.setItem(SESSION_KEY, '1');
         }
-      } catch (e) { /* si el navegador no lo soporta, no pasa nada */ }
+
+      }).catch(function () {
+        /* Sin conexión: la carta sigue funcionando con la versión guardada */
+        sessionStorage.setItem(SESSION_KEY, '1');
+      });
     })();
   </script>
 
