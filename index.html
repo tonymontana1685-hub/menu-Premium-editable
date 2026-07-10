@@ -2795,6 +2795,10 @@
     })();
   </script>
 
+  <!-- Firebase (publicación en vivo del modo admin; si no carga, la carta funciona igual) -->
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
+
   <script>
     (function () {
       "use strict";
@@ -2807,6 +2811,17 @@
       /* === MODO ADMINISTRADOR (oculto) ============================
          Contraseña del hostelero: cámbiala aquí si lo necesitas. */
       var ADMIN_PASSWORD = "brasa2026";
+
+      /* Credenciales Firebase (Realtime Database, europe-west1) */
+      var FIREBASE_CONFIG = {
+        apiKey: "AIzaSyAR0m2G0QMj5-Bhq6crSdui1447RtkDths",
+        authDomain: "proyecto-menu-digital.firebaseapp.com",
+        databaseURL: "https://proyecto-menu-digital-default-rtdb.europe-west1.firebasedatabase.app",
+        projectId: "proyecto-menu-digital",
+        storageBucket: "proyecto-menu-digital.firebasestorage.app",
+        messagingSenderId: "230324613956",
+        appId: "1:230324613956:web:e758fec36ef5a273459d11"
+      };
 
       /* ----------------------------------------------------------
          1. DICCIONARIO DE TEXTOS DE INTERFAZ (ES / EN)
@@ -2957,7 +2972,7 @@
         {
           id: "boquerones", category: "tapas", price: 6.50, recommended: false,
           allergens: ["fish"],
-          es: { name: "Boquerones en Vinagre",
+          es: { name: "Boquerones en VINAGRE BLANCO",
                 desc: "Boquerón fresco, vinagre suave, ajo y perejil.",
                 longDesc: "Boquerones frescos marinados en vinagre suave con ajo laminado y perejil, terminados con un buen aceite de oliva virgen extra." },
           en: { name: "Anchovies in Vinegar",
@@ -4288,7 +4303,7 @@
          Acceso: 3 toques rápidos sobre el logo del header.
          Nada de esto existe en el DOM hasta validar la contraseña.
          ---------------------------------------------------------- */
-      var ADMIN = { on: false };
+      var ADMIN = { on: false, db: null };
       var OVERRIDES_KEY = "tbOverrides";
 
       /* --- Overrides: aplicar cambios guardados sobre la carta --- */
@@ -4323,9 +4338,24 @@
         } catch (e) { /* almacenamiento no disponible */ }
       }
 
-      /* --- Firebase: desactivado (almacenamiento local solamente) --- */
+      /* --- Firebase: publicación en vivo (a prueba de fallos) --- */
       function initFirebase() {
-        /* Firebase removido: cambios guardados solo en este móvil */
+        try {
+          if (typeof firebase === "undefined") { return; }
+          firebase.initializeApp(FIREBASE_CONFIG);
+          ADMIN.db = firebase.database();
+
+          /* Tiempo real: cualquier cambio publicado se aplica al instante,
+             sin que el cliente tenga que recargar la página */
+          ADMIN.db.ref("overrides").on("value", function (snap) {
+            var data = snap.val();
+            if (data) {
+              applyOverrides(data);
+              renderDishes();
+              renderCart();
+            }
+          }, function () { /* sin conexión: carta local intacta */ });
+        } catch (e) { /* Firebase no disponible: la carta funciona igual */ }
       }
 
       /* --- Toast de confirmación --- */
@@ -4523,7 +4553,17 @@
 
           /* 1) Guardado inmediato en este móvil (localStorage) */
           writeLocalOverride(dish.id, ov);
-          adminToast("Guardado en este móvil · descarga para publicar");
+
+          /* 2) Publicación en vivo (Firebase) si hay conexión */
+          if (ADMIN.db) {
+            ADMIN.db.ref("overrides/" + dish.id).set(ov).then(function () {
+              adminToast("Guardado correctamente \u00b7 publicado en vivo");
+            }).catch(function () {
+              adminToast("Guardado en este m\u00f3vil \u00b7 sin conexi\u00f3n en vivo");
+            });
+          } else {
+            adminToast("Guardado en este m\u00f3vil \u00b7 sin conexi\u00f3n en vivo");
+          }
 
           closeAdminEdit();
           renderDishes();
