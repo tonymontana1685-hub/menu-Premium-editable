@@ -4460,15 +4460,18 @@
         ADMIN.on = true;
         adminBar = document.createElement("div");
         adminBar.className = "admin-bar";
+        var connLabel = ADMIN.db ? "\u25cf En vivo" : "\u25cb Sin conexión";
+        var connColor = ADMIN.db ? "#7effc0" : "#ff8a7a";
         adminBar.innerHTML =
           '<span class="admin-bar__label">Edici\u00f3n</span>' +
+          '<span class="admin-bar__status" style="font-size:0.6rem;font-weight:700;color:' + connColor + ';padding:0 0.2rem;white-space:nowrap;">' + connLabel + '</span>' +
           '<button type="button" id="adminDownload" aria-label="Descargar index actualizado">&#11015;</button>' +
           '<button type="button" id="adminExit" aria-label="Salir del modo edici\u00f3n">&#10005;</button>';
         document.body.appendChild(adminBar);
         adminBar.querySelector("#adminExit").addEventListener("click", exitAdminMode);
         adminBar.querySelector("#adminDownload").addEventListener("click", downloadUpdatedIndex);
         renderDishes();
-        adminToast("Modo edici\u00f3n activado");
+        adminToast(ADMIN.db ? "Modo edici\u00f3n activado \u00b7 conectado a Firebase" : "Modo edici\u00f3n activado \u00b7 SIN conexi\u00f3n a Firebase");
       }
 
       function exitAdminMode() {
