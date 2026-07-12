@@ -2524,7 +2524,7 @@
         <span data-i18n="viewMenu">Ver Carta</span>
       </button>
 
-      <a class="btn btn--whatsapp" href="https://wa.me/34600000000" rel="noopener" target="_blank">
+      <a class="btn btn--whatsapp" id="bookTableBtn" href="https://wa.me/34600000000" rel="noopener" target="_blank">
         <svg aria-hidden="true"><use href="#icon-whatsapp"></use></svg>
         <span data-i18n="bookTable">Reservar Mesa</span>
       </a>
@@ -2606,7 +2606,7 @@
        PÍLDORA FLOTANTE (solo vive en la pantalla de la carta)
        ============================================================ -->
   <nav class="floating-pill" id="floatingPill" aria-label="Contacto y redes sociales" aria-hidden="true">
-    <a class="pill-link pill-link--whatsapp" href="https://wa.me/34600000000" rel="noopener" target="_blank" aria-label="WhatsApp">
+    <a class="pill-link pill-link--whatsapp" id="pillWhatsapp" href="https://wa.me/34600000000" rel="noopener" target="_blank" aria-label="WhatsApp">
       <svg aria-hidden="true"><use href="#icon-whatsapp"></use></svg>
     </a>
     <a class="pill-link pill-link--instagram" href="https://instagram.com" rel="noopener" target="_blank" aria-label="Instagram">
@@ -3500,6 +3500,16 @@
          8. INTERNACIONALIZACIÓN
          ---------------------------------------------------------- */
       function applyI18n() {
+        /* Mensaje de reserva pre-escrito en los enlaces de WhatsApp */
+        var reserveMsg = state.lang === "es"
+          ? "Hola, me gustaría reservar mesa en Taberna & Brasa. ¿Podrían confirmarme disponibilidad?"
+          : "Hi, I would like to book a table at Taberna & Brasa. Could you confirm availability?";
+        var reserveUrl = "https://wa.me/" + RESTAURANT_WHATSAPP + "?text=" + encodeURIComponent(reserveMsg);
+        var bookBtn = document.getElementById("bookTableBtn");
+        var pillWa  = document.getElementById("pillWhatsapp");
+        if (bookBtn) { bookBtn.href = reserveUrl; }
+        if (pillWa)  { pillWa.href  = reserveUrl; }
+
         var nodes = document.querySelectorAll("[data-i18n]");
         var i;
         for (i = 0; i < nodes.length; i++) {
